@@ -2,7 +2,8 @@
 
 void Game()
 {   
-    srand(time(0));
+    time_t current = time(NULL);
+    srand(current);
     GameBoard Board(8, 8);
     Board.randomize();
     Board.display();
@@ -31,7 +32,10 @@ void Game()
 
         count++;
         if(count == 10) {
-            running = false;
+            //Stop condition
+            if (time(NULL) > current + 120 || count == 10) {
+                running = false;
+            }
         }
     }
 }

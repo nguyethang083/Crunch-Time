@@ -25,11 +25,28 @@ void GameBoard::randomize(){
 void GameBoard::display() {
     for(int row = 0; row < nRows; row++) {
         for(int col = 0; col < nCols; col++) {
+            switch(board[row][col]){
+                case Red:
+                    cout << "\x1B[31m";
+                    break;
+                case Green:
+                    cout << "\x1B[32m";
+                    break;
+                case Blue:
+                    cout << "\x1B[34m";;
+                    break;
+                case Orange:
+                    cout << "\x1B[33m";;
+                    break;
+                case Pink:
+                    cout << "\x1b[35m";
+                    break;
+            }
             cout << board[row][col] << ' ';
         }
         cout << '\n';
     }
-    cout << setfill('_') << setw(15) << '_' << "\n\n";
+    cout << setfill('_') << setw(15) << '_' << "\033[0m\n\n";
 };
 
 void GameBoard::clear() {
