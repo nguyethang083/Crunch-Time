@@ -1,20 +1,20 @@
 #ifndef GAME_BOARD_H
 #define GAME_BOARD_H
+#include "engine.h"
 #include <vector>
-#include <string>
 
 using namespace std;
 
-class GameBoard {
+class GameBoard : public Engine {
     public: 
+        //n*n board
         vector<vector<int>> board;
-        //Init board
-        GameBoard(const int rows, const int cols);
+        SDL_Texture* boardTexture;
 
         void randomize();
 
-        //Display board
-        void display();
+        //Render board
+        void updateBoard();
 
         //Clear matching candies
         void clear();
@@ -28,8 +28,13 @@ class GameBoard {
         //Check if exits at least 3 candies matching
         bool existMatch();
 
-    private:
+    public: 
+        GameBoard(const int rows, const int cols);
+        ~GameBoard();
+
+    protected:
         const int nRows, nCols;
+        //Candies to be removed
         vector<vector<bool>> pendingRemoval;
 };
 

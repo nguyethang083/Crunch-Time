@@ -1,8 +1,23 @@
 #ifndef GAME_H
 #define GAME_H
-#include "gameboard.h"
-#include <bits/stdc++.h>
+#include "jewels.h"
 
-void Game();
+class Game : public Candy {
+    private:
+        SDL_Event e;
+        SDL_Texture* selector;
+        void renderSelector();
+        void swapCandies();
+        void loop();
+        void updateGame();
+
+        int x,y, selectedX, selectedY;
+        bool pressed, running, selected;
+
+    public:
+        Game(const int rows, const int cols);
+        ~Game();
+
+};
 
 #endif
