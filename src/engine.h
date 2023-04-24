@@ -1,8 +1,9 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 #include <SDL.h>
+#include <SDL_image.h>
 #include <string>
-#include <log.h>
+#include "log.h"
 
 //Candies in squares 
 enum Candies{Destroyed, Red, Green, Blue, Orange, Pink, Total};

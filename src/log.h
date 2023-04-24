@@ -4,18 +4,9 @@
 
 using namespace std;
 
-class Log {
-    private:
-        //Error message
-        string msg;
+void LogSDL(const char*msg);
+void LogIMG(const char* msg); 
 
-    public: 
-        //Log SDL error
-        void SDL(const string& msg);
-        
-        //Log IMG error
-        void IMG(const string& msg);
-    
-};
+void Error(const char* msg);
 
 #endif

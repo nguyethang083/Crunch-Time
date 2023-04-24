@@ -5,10 +5,14 @@
 
 using namespace std;
 
-void Log::SDL(const string& msg) {
-    cout << msg << " Error: " << SDL_GetError();
+void LogSDL(const char* msg) {
+    cout << msg << " Error: " << SDL_GetError() << '\n';
 }
 
-void Log::IMG(const string& msg) {
-    cout << msg << " Error: " << IMG_GetError();
+void LogIMG(const char* msg) {
+    cout << msg << " Error: " << IMG_GetError() << '\n';
+}
+
+void Error(const char* msg) {
+    cout << msg;
 }

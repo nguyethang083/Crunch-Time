@@ -1,41 +1,97 @@
 #include "game.h"
 
-void Game()
-{   
-    time_t current = time(NULL);
-    srand(current);
-    GameBoard Board(8, 8);
-    Board.randomize();
-    Board.display();
+Game::Game(const int rows, const int cols) : Candy(rows, cols) {
+    selector = IMG_LoadTexture(renderer, "assets/selector.png");
+    if(selector == NULL) {
+        LogIMG("IMG_Load");
+    }
 
-    int x1, y1, x2, y2;
-    int count = 0;
-    bool running = true;
-    while(running) {
-        cout << "Select first square: ";
-        cin >> x1 >> y1;
-        cout << "Select second square: ";
-        cin >> x2 >> y2;
-        swap(Board.board[x1][y1], Board.board[x2][y2]);
+    x = y = 0;
+    running = true;
+    selected = pressed = false;
+    randomize();
+    updateCandy();
+    loop();
+}
 
-        if(!Board.existMatch()) {
-            swap(Board.board[x1][y1], Board.board[x2][y2]);
-            cout << "Invalid move!\n";
-        }
-        else{
-            while(Board.existMatch()) {
-                Board.clear();
-                Board.refill();
-                Board.display();
+Game::~Game() {
+    SDL_DestroyTexture(selector);
+    selector = NULL;
+    IMG_Quit();
+    SDL_Quit();
+}
+
+void Game::renderSelector() {
+    renderCandy();
+    if(selected){
+        SDL_RenderCopy(renderer, selector, NULL, &square[selectedX][selectedY]);
+    }
+    SDL_RenderCopy(renderer, selector, NULL, &square[x][y]);
+    SDL_RenderPresent(renderer);
+}
+
+void Game::swapCandies() {
+    switch(e.key.keysym.sym){
+        case SDLK_UP:
+            x--;
+            break;
+        case SDLK_DOWN:
+            x++;
+            break;
+        case SDLK_LEFT:
+            y--;
+            break;
+        case SDLK_RIGHT:
+            y++;
+            break;
+        case SDLK_RETURN:
+            if(!selected) {
+                selectedX = x, selectedY = y;
+                selected = true;
             }
-        }
+            else {
+                selected = false;
+                std::swap(board[selectedX][selectedY], board[x][y]);
+                updateCandy();
+                SDL_Delay(300);
+                if(!existMatch()) {
+                    swap(board[selectedX][selectedY], board[x][y]);
+                    updateCandy();
+                    SDL_Delay(300);
+                }
+                x = y = 0;
+                selected = pressed = false;
+            }
+            break;
 
-        count++;
-        if(count == 10) {
-            //Stop condition
-            if (time(NULL) > current + 120 || count == 10) {
+    }
+}
+
+void Game::updateGame() {
+    while(existMatch()) {
+        clear();
+        updateCandy();
+        SDL_Delay(500);
+        refill();
+        updateCandy();
+    }
+}
+
+void Game::loop() {
+    while(running) {
+        while(SDL_PollEvent(&e) != 0) {
+            if(e.type == SDL_QUIT) 
                 running = false;
+            if(e.type == SDL_KEYDOWN) {
+                if(!pressed) {
+                    pressed = true;
+                } else swapCandies();
+                renderSelector();
+                updateGame();
             }
         }
     }
 }
+
+        
+    

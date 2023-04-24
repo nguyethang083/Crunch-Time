@@ -1,5 +1,4 @@
 #include "gameboard.h"
-#include "candies.h"
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -7,7 +6,14 @@ using namespace std;
 GameBoard::GameBoard(const int rows, const int cols) : nRows(rows), nCols(cols) {
     board.resize(nRows, vector<int>(nCols));
     pendingRemoval.resize(nRows, vector<bool>(nCols));    
-};
+
+    boardTexture = IMG_LoadTexture(renderer, "assets/Background.png");
+}
+
+GameBoard::~GameBoard() {
+    SDL_DestroyTexture(boardTexture);
+    boardTexture = NULL;
+}
 
 void GameBoard::randomize(){
     //Create board
@@ -20,34 +26,15 @@ void GameBoard::randomize(){
         clear();
         refill();
     }
-};
+}
 
-void GameBoard::display() {
-    for(int row = 0; row < nRows; row++) {
-        for(int col = 0; col < nCols; col++) {
-            switch(board[row][col]){
-                case Red:
-                    cout << "\x1B[31m";
-                    break;
-                case Green:
-                    cout << "\x1B[32m";
-                    break;
-                case Blue:
-                    cout << "\x1B[34m";;
-                    break;
-                case Orange:
-                    cout << "\x1B[33m";;
-                    break;
-                case Pink:
-                    cout << "\x1b[35m";
-                    break;
-            }
-            cout << board[row][col] << ' ';
-        }
-        cout << '\n';
+void GameBoard::updateBoard() {
+    SDL_RenderClear(renderer);
+    if(boardTexture == NULL){
+        LogIMG("IMG_Load");
     }
-    cout << setfill('_') << setw(15) << '_' << "\033[0m\n\n";
-};
+    SDL_RenderCopy(renderer, boardTexture, NULL, NULL);
+}
 
 void GameBoard::clear() {
     for(int row = 0; row < nRows; row++) {
@@ -58,7 +45,7 @@ void GameBoard::clear() {
             }
         }
     }
-};
+}
 
 void GameBoard::refill() {
     //Drop candies down
@@ -80,7 +67,7 @@ void GameBoard::refill() {
             }
         }
     }
-};
+}
 
 bool GameBoard::match3(int row, int col, const string& direction)
 {
@@ -105,7 +92,7 @@ bool GameBoard::match3(int row, int col, const string& direction)
         pendingRemoval[row + i*stepX][col + i*stepY] = 1;
     }
     return true;
-};
+}
 
 bool GameBoard::existMatch() {
     bool exist = false;
@@ -128,5 +115,5 @@ bool GameBoard::existMatch() {
         }    
     }
     return exist;
-};
+}
 

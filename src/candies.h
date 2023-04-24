@@ -1,10 +1,11 @@
 #ifndef CANDIES_H
 #define CANDIES_H
+#include "gameboard.h"
 
-class Candies : public GameBoard {
+class Candy : public GameBoard {
     protected:
         //Candy textures
-        SDL_Texture* jewelTexture[Total];
+        SDL_Texture* candyTexture[Total];
         //Squares that hold candy
         vector<vector<SDL_Rect>> square;
     
@@ -15,6 +16,6 @@ class Candies : public GameBoard {
         //Render Candies
         void renderCandy();
         void updateCandy();
-}
+};
 
 #endif

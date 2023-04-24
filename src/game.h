@@ -1,6 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
-#include "jewels.h"
+#include "candies.h"
 
 class Game : public Candy {
     private:
