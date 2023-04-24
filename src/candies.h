@@ -2,7 +2,7 @@
 #define CANDIES_H
 #include "gameboard.h"
 
-class Candy : public GameBoard {
+class Candy : protected GameBoard {
     protected:
         //Candy textures
         SDL_Texture* candyTexture[Total];

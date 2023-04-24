@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class GameBoard : public Engine {
+class GameBoard : protected Engine {
     public: 
         //n*n board
         vector<vector<int>> board;

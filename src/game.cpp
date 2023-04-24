@@ -34,15 +34,51 @@ void Game::swapCandies() {
     switch(e.key.keysym.sym){
         case SDLK_UP:
             x--;
+            if(selected) {
+                y = selectedY;
+                if(x < 0)
+                    x = selectedX;
+                if(x != selectedX)
+                    x = selectedX - 1;
+            }
+            else if(x == -1)
+                x = nRows - x - 2;
             break;
         case SDLK_DOWN:
             x++;
+            if(selected) {
+                y = selectedY;
+                if(x < 0)
+                    x = selectedX;
+                if(x != selectedX)
+                    x = selectedX + 1;
+            }
+            else if(x == nRows)
+                x = 0;
             break;
         case SDLK_LEFT:
             y--;
+            if(selected) {
+                x = selectedX;
+                if(y < 0)
+                    y = selectedY;
+                if(y != selectedY)
+                    y = selectedY - 1;
+            }
+            else if(y == -1)
+                y = nCols - y - 2;
             break;
         case SDLK_RIGHT:
             y++;
+            if(selected) {
+                x = selectedX;
+                if(y < 0)
+                    y = selectedY;
+                if(y != selectedY)
+                    y = selectedY + 1;
+            }
+            else if(y == nRows)
+                y = 0;
             break;
         case SDLK_RETURN:
             if(!selected) {
@@ -50,7 +86,6 @@ void Game::swapCandies() {
                 selected = true;
             }
             else {
-                selected = false;
                 std::swap(board[selectedX][selectedY], board[x][y]);
                 updateCandy();
                 SDL_Delay(300);
@@ -78,17 +113,15 @@ void Game::updateGame() {
 }
 
 void Game::loop() {
-    while(running) {
-        while(SDL_PollEvent(&e) != 0) {
-            if(e.type == SDL_QUIT) 
-                running = false;
-            if(e.type == SDL_KEYDOWN) {
-                if(!pressed) {
-                    pressed = true;
-                } else swapCandies();
-                renderSelector();
-                updateGame();
-            }
+    while(running && SDL_WaitEvent(&e)) {
+        if(e.type == SDL_QUIT)
+            running = false;
+        if(e.type == SDL_KEYDOWN) {
+            if(!pressed){
+                pressed = true;
+            } else swapCandies();
+            renderSelector();
+            updateGame();
         }
     }
 }

@@ -2,7 +2,7 @@
 #define GAME_H
 #include "candies.h"
 
-class Game : public Candy {
+class Game : private Candy {
     private:
         SDL_Event e;
         SDL_Texture* selector;

@@ -1,6 +1,6 @@
 #include "game.h"
 
-//Version 1.2
+//Version 1.3
 
 int main(int argc, char* args[]) {
     Game game(8, 8);

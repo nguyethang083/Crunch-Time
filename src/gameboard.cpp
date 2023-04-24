@@ -1,7 +1,4 @@
 #include "gameboard.h"
-#include <bits/stdc++.h>
-
-using namespace std;
 
 GameBoard::GameBoard(const int rows, const int cols) : nRows(rows), nCols(cols) {
     board.resize(nRows, vector<int>(nCols));
