@@ -2,20 +2,30 @@
 #define GAME_H
 #include "candies.h"
 
-class Game : private Candy {
+class Game {
     private:
         SDL_Event e;
+
+        //Selector texture
         SDL_Texture* selector;
+
+        //Draw selector
         void renderSelector();
-        void swapCandies();
-        void loop();
-        void updateGame();
+
+        Candy candy;
 
         //Coordinate
         int x, y;
 
         //Selected coordinate
         int selectedX, selectedY;
+
+        //Swap 2 candies
+        void swapCandies();
+
+        void loop();
+        void updateGame();
+
 
         //Check if key was pressed
         bool pressed;
@@ -27,7 +37,7 @@ class Game : private Candy {
         bool selected;
 
     public:
-        Game(const int rows, const int cols);
+        Game(const int& rows, const int& cols);
         ~Game();
 
 };

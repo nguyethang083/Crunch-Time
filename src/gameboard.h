@@ -6,20 +6,25 @@
 using namespace std;
 
 class GameBoard : protected Engine {
+    private:
+        //Board Texture
+        SDL_Texture* boardTexture;
+
     protected:
         //Board size
         const int nRows, nCols;
 
-        //Candies to be removed
-        vector<vector<bool>> pendingRemoval;
-
         //n*n board
         vector<vector<int>> board;
 
-        //Board Texture
-        SDL_Texture* boardTexture;
+        //Squares that hold candy
+        vector<vector<SDL_Rect>> square;
 
-        void randomize();
+       //Candies to be removed
+       vector<vector<bool>> pendingRemoval;
+
+       GameBoard(const int& rows, const int& cols);
+        ~GameBoard();
 
         //Render board
         void updateBoard();
@@ -30,15 +35,6 @@ class GameBoard : protected Engine {
         //Refill candies
         void refill();
 
-        //Check if 3 candies are matched
-        bool match3(int row, int col, const string& direction);
-
-        //Check if exits at least 3 candies matching
-        bool existMatch();
-
-    public: 
-        GameBoard(const int rows, const int cols);
-        ~GameBoard();
 };
 
 #endif
