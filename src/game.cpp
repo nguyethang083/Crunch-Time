@@ -9,6 +9,7 @@ Game::Game(const int rows, const int cols) : Candy(rows, cols) {
     x = y = 0;
     running = true;
     selected = pressed = false;
+    
     randomize();
     updateCandy();
     loop();

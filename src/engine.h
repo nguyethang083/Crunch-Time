@@ -10,13 +10,20 @@ enum Candies{Destroyed, Red, Green, Blue, Orange, Pink, Total};
 
 class Engine {
     private:
+        //Window size
         const int WINDOW_WIDTH, WINDOW_HEIGHT;
+
+        //Window title
         const std::string TITLE;
-        SDL_Surface* icon;
+
+        //Init Engine
         bool init();
-    public:
+
+    protected:
         SDL_Window* window;
         SDL_Renderer* renderer;
+
+    public: 
         Engine();
         ~Engine();
 
