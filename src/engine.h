@@ -1,12 +1,6 @@
 #ifndef ENGINE_H
 #define ENGINE_H
-#include <SDL.h>
-#include <SDL_image.h>
-#include <string>
-#include "log.h"
-
-//Candies in squares 
-enum Candies{Destroyed, Red, Green, Blue, Orange, Pink, Total};
+#include "texture.h"
 
 class Engine {
     private:
@@ -15,17 +9,37 @@ class Engine {
 
         //Window title
         const std::string TITLE;
+        
+        //Font
+        TTF_Font* gFont;
 
         //Init Engine
         bool init();
 
-    protected:
-        SDL_Window* window;
-        SDL_Renderer* renderer;
+    //Init Texture
+    bool initTexture();
 
+    void exit();
+
+    public:
         Engine();
         ~Engine();
 
+        //Board texture
+        Texture boardTexture;
+
+        //Canides textures
+        Texture candyTexture[Total];
+
+        //Selector texture
+        Texture selectorTexture;
+
+        //Font texture;
+        Texture font;
+
+        void render();
+
+        void renderClear();
 };
 
 #endif

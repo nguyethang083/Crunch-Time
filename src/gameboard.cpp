@@ -1,13 +1,8 @@
 #include "gameboard.h"
 
-GameBoard::GameBoard(const int& rows, const int& cols) : nRows(rows), nCols(cols) {
+GameBoard::GameBoard(const int& nRows, const int& nCols) : nRows(nRows), nCols(nCols) {
     //Init board
     board.resize(nRows, vector<int>(nCols));  
-
-    boardTexture = IMG_LoadTexture(renderer, "assets/Background.png");
-        if(boardTexture == NULL){
-        LogIMG("IMG_Load");
-    }
 
     //Initialize squares
     square.resize(nRows, vector<SDL_Rect>(nCols));
@@ -22,16 +17,6 @@ GameBoard::GameBoard(const int& rows, const int& cols) : nRows(rows), nCols(cols
     }
 
     pendingRemoval.resize(nRows, vector<bool>(nCols));
-}
-
-GameBoard::~GameBoard() {
-    SDL_DestroyTexture(boardTexture);
-    boardTexture = NULL;
-}
-
-void GameBoard::updateBoard() {
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, boardTexture, NULL, NULL);
 }
 
 void GameBoard::clear() {
@@ -51,7 +36,7 @@ void GameBoard::refill() {
         for(int row = nRows - 1; row >=0; row--) {
             for(int _row = row - 1; _row >= 0; _row--) {
                 if(board[row][col] == Destroyed && board[_row][col] != 0) {
-                    swap(board[row][col], board[_row][col]);
+                    std::swap(board[row][col], board[_row][col]);
                 }
             }
         }

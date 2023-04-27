@@ -1,53 +1,35 @@
 #include "candies.h"
 
-Candy::Candy(const int& rows, const int& cols) : GameBoard(rows, cols) {
-    //Initialize texture
-    candyTexture[Destroyed] = NULL;
-    candyTexture[Red] = IMG_LoadTexture(renderer, "assets/red.jpg");
-    candyTexture[Green] = IMG_LoadTexture(renderer, "assets/green.jpg");
-    candyTexture[Blue] = IMG_LoadTexture(renderer, "assets/blue.jpg");
-    candyTexture[Orange] = IMG_LoadTexture(renderer, "assets/orange.jpg");
-    candyTexture[Pink] = IMG_LoadTexture(renderer, "assets/pink.jpg");
-    for(int i = 1; i < Total; i++){
-        if(candyTexture[i] == NULL){
-            LogIMG("IMG_Load");
-        }
-    }
+Candy::Candy(const int& nRows, const int& nCols) : GameBoard(nRows, nCols) {
+    selected = pressed = false;
 }
 
-Candy::~Candy() {
-    for(int i = 0; i < Total; i++){
-        SDL_DestroyTexture(candyTexture[i]);
-        candyTexture[i] = NULL;
+void Candy::randomize() {
+    //Create board
+    for (int i = 0; i < nRows; i++) {
+        for (int j = 0; j < nCols; j++) {
+            board[i][j] = rand() % (Total - 1) + 1;
+        }
+    }
+    while(existMatch()) {
+        clear();
+        refill();
     }
 }
 
 void Candy::renderCandy() {
-    updateBoard();
+    engine.boardTexture.render(NULL);
     for(int x = 0; x < nRows; x++) {
         for(int y = 0; y < nCols; y++) {
             int COLOR = board[x][y];
-            SDL_RenderCopy(renderer, candyTexture[COLOR], NULL, &square[x][y]);
+            engine.candyTexture[COLOR].render(&square[x][y]);
         }
     }
 }
 
 void Candy::updateCandy() {   
     renderCandy();
-    SDL_RenderPresent(renderer);
-}
-
-void Candy::randomize() {
-    //Board creation
-    for(int i = 0; i < nRows; i++){
-        for(int j = 0; j < nCols; j++){
-            board[i][j] = rand() % (Total-1) + 1;
-        }
-    }
-    while(existMatch()){
-        clear();
-        refill();
-    }
+    engine.render();
 }
 
 bool Candy::match3(const int& row, const int& col, const std::string& direction) {
@@ -95,4 +77,15 @@ bool Candy::existMatch() {
         }    
     }
     return exist;
+}
+
+void Candy::renderSelector(int selectedX, int selectedY, int x, int y) {
+    renderCandy();
+    if(selected){
+        engine.selectorTexture.render(&square[selectedX][selectedY]);
+    }
+    if(pressed) {
+        engine.selectorTexture.render(&square[x][y]);
+    }
+    engine.render();
 }

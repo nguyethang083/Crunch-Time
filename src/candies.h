@@ -2,14 +2,11 @@
 #define CANDIES_H
 #include "gameboard.h"
 
-class Candy : protected GameBoard {
+class Candy : private GameBoard {
     private:
-        //Candy textures
-        SDL_Texture* candyTexture[Total];
         friend class Game;
 
         Candy(const int& rows, const int& cols);
-        ~Candy();
 
         //Render Candies
         void renderCandy();
@@ -25,6 +22,12 @@ class Candy : protected GameBoard {
 
         //Check if exists at least 3 candies matched
         bool existMatch();
+
+        //Check if a candy was selected
+        bool pressed, selected;
+
+        //Draw selector
+        void renderSelector(int selectedX, int selectedY, int x, int y);
 };
 
 #endif

@@ -2,15 +2,12 @@
 #define GAME_BOARD_H
 #include "engine.h"
 #include <vector>
+using std::vector; 
 
-using namespace std;
-
-class GameBoard : protected Engine {
-    private:
-        //Board Texture
-        SDL_Texture* boardTexture;
-
+class GameBoard {
     protected:
+        Engine engine;
+
         //Board size
         const int nRows, nCols;
 
@@ -23,11 +20,7 @@ class GameBoard : protected Engine {
        //Candies to be removed
        vector<vector<bool>> pendingRemoval;
 
-       GameBoard(const int& rows, const int& cols);
-        ~GameBoard();
-
-        //Render board
-        void updateBoard();
+        GameBoard(const int& nRows, const int& nCols);
 
         //Clear matching candies
         void clear();

@@ -2,18 +2,18 @@
 #include <bits/stdc++.h>
 
 Engine::Engine() : WINDOW_WIDTH(800), WINDOW_HEIGHT(600), TITLE("Crunch Time") {
-    time_t current = time(NULL);
-    srand(current);
+    srand(time(NULL));
     if(!init()) {
         Error("Unable to init Engine");
+        exit();
+    } else if(!initTexture()) {
+        Error("Unable to load Textures");
+        exit();
     }
 }
 
 Engine::~Engine() {
-    SDL_DestroyRenderer(renderer);
-    renderer = NULL;
-    SDL_DestroyWindow(window);
-    window = NULL;
+    exit();
 }
 
 bool Engine::init() {
@@ -39,4 +39,33 @@ bool Engine::init() {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
     
     return success;
+}
+
+bool Engine::initTexture() {
+    if( boardTexture.loadFile("assets/game_background_4.png") && //Initialize board texture
+        candyTexture[Red].loadFile("assets/red.jpg") && //Initialize candies texture
+        candyTexture[Green].loadFile("assets/green.jpg") &&
+        candyTexture[Blue].loadFile("assets/blue.jpg") &&
+        candyTexture[Orange].loadFile("assets/orange.jpg") &&
+        candyTexture[Pink].loadFile("assets/pink.jpg") &&
+        selectorTexture.loadFile("assets/selector.png")) //Initialize selector texture
+    return true;
+    else return false;
+}
+
+void Engine::exit() {
+    SDL_DestroyRenderer(renderer);
+    renderer = NULL;
+    SDL_DestroyWindow(window);
+    window = NULL;
+    IMG_Quit();
+    SDL_Quit();
+}
+
+void Engine::render() {
+    SDL_RenderPresent(renderer);
+}
+
+void Engine::renderClear() {
+    SDL_RenderClear(renderer);
 }
