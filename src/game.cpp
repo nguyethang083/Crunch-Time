@@ -3,7 +3,6 @@
 Game::Game(const int& nRows, const int& nCols) : candy(nRows, nCols) {
     x = y = 0;
     running = true;
-
     candy.randomize();
     candy.updateCandy();
     loop();
@@ -19,7 +18,24 @@ void Game::updateGame() {
     }
 }
 
+Uint32 Game::callback(Uint32 interval, void* param) {
+    SDL_Event event;
+    SDL_UserEvent userevent;
+
+    userevent.type = SDL_USEREVENT;
+    userevent.code = 0;
+    userevent.data1 = NULL;
+    userevent.data2 = NULL;
+
+    event.type = SDL_USEREVENT;
+    event.user = userevent;
+
+    SDL_PushEvent(&event);
+    return(interval);
+}
+
 void Game::loop() {
+    SDL_TimerID timerID = SDL_AddTimer(1000, callback, NULL);
     while(running && SDL_WaitEvent(&e)) {
         if(e.type == SDL_QUIT)
             running = false;
@@ -30,8 +46,9 @@ void Game::loop() {
             else swapCandies();
             candy.renderSelector(selectedX, selectedY, x, y);
             updateGame();
-        }
+        } else candy.renderSelector(selectedX, selectedY, x, y);
     }
+    SDL_RemoveTimer(timerID);
     
 }
 

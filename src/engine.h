@@ -1,6 +1,10 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 #include "texture.h"
+#include "timer.h"
+
+//Candies in squares
+enum Candies{Destroyed, Red, Green, Blue, Orange, Pink, Total};
 
 class Engine {
     private:
@@ -38,14 +42,19 @@ class Engine {
 
         //Score texture
         Texture scoreTexture;
+        Texture scoreFont;
 
-        //Font texture;
-        Texture numberFont;
-        Texture letterFont;
+        //Timer
+        Timer timer;
+        Texture timerTexture;
+        Texture timerFont;
+
+         //Game font;
+        Texture gFont[2];
 
         void render();
 
-        void renderClear();
+        void renderClear(SDL_Rect* rect);
 };
 
 #endif

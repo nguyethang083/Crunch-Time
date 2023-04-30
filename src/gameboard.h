@@ -27,14 +27,21 @@ class GameBoard {
         //Render game boards
         void renderBoard(int score);
 
+        //Render timer
+        int time;
+        void renderTimer();
+        SDL_Rect timeBoard;
+
+        //Render score
+        void renderScore(int score);
+        int score;
+        int scoreCalculate();
+
         //Clear matching candies
         void clear();
 
         //Refill candies
         void refill();
-
-        int score;
-        int scoreCalculate();
 
 };
 

@@ -2,7 +2,6 @@
 #define TEXTURE_H
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "common.h"
 #include "log.h"
 
 class Texture {
@@ -29,6 +28,9 @@ class Texture {
 		//Loads image at specified path
 		bool loadFile(std::string path);
 
+		//Open font
+		bool openFont(std::string path, int size);
+		
 		//Creates image from font string
 		bool loadText(std::string textureText);
 

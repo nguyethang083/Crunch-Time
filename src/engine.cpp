@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "common.h"
 #include <bits/stdc++.h>
 
 Engine::Engine() : WINDOW_WIDTH(800), WINDOW_HEIGHT(600), TITLE("Crunch Time") {
@@ -22,7 +23,7 @@ Engine::~Engine() {
 }
 
 bool Engine::init() {
-    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
         LogSDL("SDL_Init");
         success = false; 
     }
@@ -58,28 +59,22 @@ bool Engine::initTexture() {
         candyTexture[Orange].loadFile("assets/orange.jpg") &&
         candyTexture[Pink].loadFile("assets/pink.jpg") &&
         selectorTexture.loadFile("assets/selector.png") && 
-        scoreTexture.loadFile("assets/play button.png")) //Initialize selector texture
+        scoreTexture.loadFile("assets/play button.png") && //Initialize selector texture
+        timerTexture.loadFile("assets/timer bg.png")) // Initialize timer background
     return true;
     else return false;
 }
 
 bool Engine::initFont() {
-    letterFont.font = TTF_OpenFont("assets/fonts/LeOsler_Rough-Regular.ttf", 40);
-    if(letterFont.font == NULL) {
-        LogTTF("TTF_OpenFont");
-        success = false;
-    }
-    numberFont.font = TTF_OpenFont("assets/fonts/LeOsler_Rough-Regular.ttf", 35);
-    if(numberFont.font == NULL) {
-        LogTTF("TTF_OpenFont");
-        success = false;
-    }
-    return success;
+    if (gFont[0].openFont("assets/fonts/LeOsler_Rough-Regular.ttf", 40) && //Initialize game font
+        gFont[1].openFont("assets/fonts/LeOsler_Rough-Regular.ttf", 40) &&
+        scoreFont.openFont("assets/fonts/LeOsler_Rough-Regular.ttf", 35) && //Initialize score font
+        timerFont.openFont("assets/fonts/LeOsler_Rough-Regular.ttf", 55)) //Initialize timer font
+    return true;
+    else return false;
 }
 
 void Engine::exit() {
-    TTF_CloseFont(letterFont.font);
-    TTF_CloseFont(numberFont.font);
     SDL_DestroyRenderer(renderer);
     renderer = NULL;
     SDL_DestroyWindow(window);
@@ -93,6 +88,9 @@ void Engine::render() {
     SDL_RenderPresent(renderer);
 }
 
-void Engine::renderClear() {
-    SDL_RenderClear(renderer);
+void Engine::renderClear(SDL_Rect* rect) {
+    if(rect != NULL) {
+        SDL_RenderFillRect(renderer, rect);
+    }
+    else SDL_RenderClear(renderer);
 }
