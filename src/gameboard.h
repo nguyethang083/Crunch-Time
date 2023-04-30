@@ -18,15 +18,23 @@ class GameBoard {
         vector<vector<SDL_Rect>> square;
 
        //Candies to be removed
-       vector<vector<bool>> pendingRemoval;
+        vector<vector<bool>> pendingRemoval;
+
+        SDL_Rect scoreBoard;
 
         GameBoard(const int& nRows, const int& nCols);
+
+        //Render game boards
+        void renderBoard(int score);
 
         //Clear matching candies
         void clear();
 
         //Refill candies
         void refill();
+
+        int score;
+        int scoreCalculate();
 
 };
 

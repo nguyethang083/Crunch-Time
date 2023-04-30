@@ -27,12 +27,14 @@ bool Texture::loadFile(std::string path) {
 	return texture != NULL;
 }
 
-bool Texture::loadText(TTF_Font* gFont, std::string textureText, SDL_Color textColor) {
+bool Texture::loadText(std::string textureText) {
 	//Get rid of preexisting texture
 	free();
 
+	SDL_Color textColor = {255, 255, 255};
+
 	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
+	SDL_Surface* textSurface = TTF_RenderText_Solid(font, textureText.c_str(), textColor);
 	if(textSurface == NULL) {
 		LogTTF("TTF_RenderText");
 	} else {

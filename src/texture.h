@@ -24,11 +24,13 @@ class Texture {
 		//Deallocates memory
 		~Texture();
 
+		TTF_Font* font;
+
 		//Loads image at specified path
 		bool loadFile(std::string path);
 
 		//Creates image from font string
-		bool loadText(TTF_Font* gFont, std::string textureText, SDL_Color textColor);
+		bool loadText(std::string textureText);
 
 		//Renders texture to an existing SDL_Rect
 		void render(SDL_Rect* renderRect);

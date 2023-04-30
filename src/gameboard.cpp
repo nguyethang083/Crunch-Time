@@ -1,6 +1,9 @@
 #include "gameboard.h"
 
 GameBoard::GameBoard(const int& nRows, const int& nCols) : nRows(nRows), nCols(nCols) {
+    //Init score
+    score = 0;
+    
     //Init board
     board.resize(nRows, vector<int>(nCols));  
 
@@ -17,6 +20,25 @@ GameBoard::GameBoard(const int& nRows, const int& nCols) : nRows(nRows), nCols(n
     }
 
     pendingRemoval.resize(nRows, vector<bool>(nCols));
+
+    //Initialize score board
+    scoreBoard.x = 15;
+    scoreBoard.y = 100;
+    scoreBoard.w = 192;
+    scoreBoard.h = 50;
+
+    engine.letterFont.loadText("score");
+}
+
+int GameBoard::scoreCalculate() {
+    int count = 0;
+    for(int row = 0; row < nRows; row++) {
+        for(int col = 0; col < nCols; col++) {
+            if(pendingRemoval[row][col])
+                count++;
+        }
+    }
+    return (count / 3) * 100 + (count % 3) * 30;
 }
 
 void GameBoard::clear() {
@@ -50,6 +72,15 @@ void GameBoard::refill() {
             }
         }
     }
-
 }
+
+void GameBoard::renderBoard(int score) {
+    engine.renderClear();
+    engine.boardTexture.render(NULL);
+    engine.scoreTexture.render(&scoreBoard);
+    engine.letterFont.renderNew(70, 50);
+    engine.numberFont.loadText(std::to_string(score));
+    engine.numberFont.renderNew(20, 105);
+}
+
 

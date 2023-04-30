@@ -10,16 +10,18 @@ class Engine {
         //Window title
         const std::string TITLE;
         
-        //Font
-        TTF_Font* gFont;
+        bool success;
 
         //Init Engine
         bool init();
 
-    //Init Texture
-    bool initTexture();
+        //Init Texture
+        bool initTexture();
 
-    void exit();
+        //Init font
+        bool initFont();
+
+        void exit();
 
     public:
         Engine();
@@ -34,8 +36,12 @@ class Engine {
         //Selector texture
         Texture selectorTexture;
 
+        //Score texture
+        Texture scoreTexture;
+
         //Font texture;
-        Texture font;
+        Texture numberFont;
+        Texture letterFont;
 
         void render();
 
