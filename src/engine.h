@@ -3,6 +3,7 @@
 #include "texture.h"
 #include "Text.h"
 #include "timer.h"
+#include "Sound.h"
 
 //Candies in squares
 enum Candies{Destroyed, Red, Green, Blue, Orange, Pink, Gold, Total};
@@ -26,37 +27,36 @@ class Engine {
         //Init font
         bool initFont();
 
+        //Init Sound
+        bool initSound();
+
         void exit();
 
     public:
         Engine();
         ~Engine();
 
-        //Board texture
-        Texture boardTexture;
+        Timer timer; 
+        //Textures
+        Texture boardTexture; //Board texture
+        Texture candyTexture[Total]; //Candies textures
+        Texture selectorTexture; //Selector texture
+        Texture scoreTexture; //Score texture
+        Texture timerTexture; //Timer texture
+        Texture startTexture; //Start screen texture
+        Texture endTexture; //End screen texture
 
-        //Canides textures
-        Texture candyTexture[Total];
+        //Texts
+        Text score; //Score
+        Text times; //Remaing time
+        Text scoreText; // "score" text
+        Text timeText; // "time" text
 
-        //Selector texture
-        Texture selectorTexture;
-
-        //Score texture
-        Texture scoreTexture;
-        Text score;
-
-        //Timer
-        Timer timer;
-        Texture timerTexture;
-        Text times;
-
-         //Game font;
-        Text scoreText;
-        Text timeText;
-
-        //Game state texture
-        Texture startTexture;
-        Texture endTexture;
+        //Sounds
+        Sound music;
+        Sound startSFX;
+        Sound endSFX;
+        Sound matchSFX[3];
 
         //Update screen
         void render();

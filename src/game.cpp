@@ -1,7 +1,7 @@
 #include "game.h"
 
-Game::Game(const int& nRows, const int& nCols) : candy(nRows, nCols) {
-    gameStarted = false;
+Game::Game(const int& nRows, const int& nCols, int time) : candy(nRows, nCols, time) {
+    gameStarted = gameEnded = false;
     running = true;
 
     startGame();
@@ -18,31 +18,48 @@ void Game::startGame() {
             running = false;
         else {
             candy.renderStart();
-            if(e.type == SDL_KEYDOWN) {
-                if(e.key.keysym.sym == SDLK_RETURN)
-                    gameStarted = true;
+            if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN) {
+                candy.engine.startSFX.playSFX();
+                while(delay.countdown(1000));
+                gameStarted = true;
+                candy.engine.music.playMusic();
+                timerID = SDL_AddTimer(1000, callback, NULL);
             }
         }
     }
 }
 
 void Game::endGame() {
-    candy.renderEnd();
-    if(e.type == SDL_KEYDOWN) {
-        if(e.key.keysym.sym == SDLK_RETURN) {
-            candy.randomize();
-            candy.gameOver = false;
-            timerID = SDL_AddTimer(1000, callback, NULL);
-            while(delay.countdown(750));
-        }
+    if(!gameEnded) {
+        gameEnded = true;
+        candy.renderEnd();
+        candy.engine.endSFX.playSFX();
+        candy.engine.music.stopMusic();
+    }
+    if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN) {
+        candy.randomize();
+        candy.gameover = gameEnded = false;
+        candy.engine.startSFX.playSFX();
+        timerID = SDL_AddTimer(1000, callback, NULL);
+        while(delay.countdown(750));
+        candy.engine.music.playMusic();
     }
 }
 
 void Game::updateGame() {
-     while(candy.existMatch()) {
+    int count = 0;
+    while(candy.existMatch()) {
+        count++;
+        if(count == 1) {
+            candy.engine.matchSFX[0].playSFX();
+        }
+        else if(count == 2) {
+            candy.engine.matchSFX[1].playSFX();
+        }
+        else candy.engine.matchSFX[2].playSFX();
         candy.clear();
         candy.updateCandy();
-        while(delay.countdown(500));
+        while(delay.countdown(700));
         candy.refill();
         candy.updateCandy();
     }
@@ -65,11 +82,10 @@ Uint32 Game::callback(Uint32 interval, void* param) {
 }
 
 void Game::loop() {
-    timerID = SDL_AddTimer(1000, callback, NULL);
     while(running && SDL_WaitEvent(&e)) {
         if(e.type == SDL_QUIT)
             running = false;
-        if(candy.gameOver) {
+        if(candy.gameover) {
             SDL_RemoveTimer(timerID);
             endGame();
         }
@@ -153,7 +169,7 @@ void Game::swapCandies() {
                         candy.updateCandy();
                         while(delay.countdown(300));
                     }
-                    x = y = 0;
+                    else x = y = 0;
                     candy.pressed = false;
                 }
                 else {

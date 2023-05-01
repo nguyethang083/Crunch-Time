@@ -1,6 +1,6 @@
 #include "candies.h"
 
-Candy::Candy(const int& nRows, const int& nCols) : GameBoard(nRows, nCols) {
+Candy::Candy(const int& nRows, const int& nCols, int time) : GameBoard(nRows, nCols, time) {
     selected = pressed = false;
 }
 

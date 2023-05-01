@@ -6,7 +6,7 @@ class Candy : private GameBoard {
     private:
         friend class Game;
 
-        Candy(const int& rows, const int& cols);
+        Candy(const int& nRows, const int& nCols, int time);
 
         //Render Candies
         void renderCandy();

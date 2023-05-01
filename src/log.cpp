@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include "log.h"
 #include <iostream>
 
@@ -16,6 +17,10 @@ void LogIMG(const string msg) {
 
 void LogTTF(const string msg) {
     cerr << msg << " Error: " << TTF_GetError() << '\n';
+}
+
+void LogMixer(const string msg) {
+    std::cerr << msg << " Error: " << Mix_GetError() << '\n';
 }
 
 void Error(const string msg) {

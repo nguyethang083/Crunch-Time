@@ -31,6 +31,7 @@ class Game {
         //Game state
         void startGame();
         void endGame();
+        bool gameEnded;
 
         //Check if game is running
         bool running;
@@ -38,7 +39,7 @@ class Game {
         static Uint32 callback(Uint32 interval, void* param);
     
     public:
-        Game(const int& nRows, const int& nCols);
+        Game(const int& nRows, const int& nCols, int time);
 
 };
 

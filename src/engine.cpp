@@ -13,7 +13,10 @@ Engine::Engine() : WINDOW_WIDTH(800), WINDOW_HEIGHT(600), TITLE("Crunch Time") {
         exit();
     }
     else if(!initFont()) {
-        Error("Unable to load Font!");
+        Error("Unable to load Fonts!");
+        exit();
+    } else if(!initSound()) {
+        Error("Unable to load Sounds");
         exit();
     }
 }
@@ -23,13 +26,18 @@ Engine::~Engine() {
 }
 
 bool Engine::init() {
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) < 0) {
         LogSDL("SDL_Init");
         success = false; 
     }
 
     if(TTF_Init() == -1) {
         LogTTF("TTF_Init");
+        success = false;
+    }
+
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0){
+        LogMixer("Mixer_OpenAudio");
         success = false;
     }
 
@@ -81,12 +89,21 @@ bool Engine::initFont() {
 
     else return true;
 }
+bool Engine::initSound() {
+    if (!music.loadMusic("assets/sounds/music.mp3") || !matchSFX[0].loadSFX("assets/sounds/match1.ogg") ||
+        !matchSFX[1].loadSFX("assets/sounds/match2.ogg") || !matchSFX[2].loadSFX("assets/sounds/match3.ogg") ||
+        !startSFX.loadSFX("assets/sounds/gamestart.ogg") || !endSFX.loadSFX("assets/sounds/gameover.ogg"))
+        return false;
+
+        else return true;
+}
 
 void Engine::exit() {
     SDL_DestroyRenderer(renderer);
     renderer = NULL;
     SDL_DestroyWindow(window);
     window = NULL;
+    Mix_Quit();
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();

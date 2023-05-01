@@ -1,6 +1,6 @@
 #include "gameboard.h"
 
-GameBoard::GameBoard(const int& nRows, const int& nCols) : nRows(nRows), nCols(nCols) {
+GameBoard::GameBoard(const int& nRows, const int& nCols, int time) : nRows(nRows), nCols(nCols), time(time * 1000) {
     //Init board
     board.resize(nRows, vector<int>(nCols));  
 
@@ -30,10 +30,7 @@ GameBoard::GameBoard(const int& nRows, const int& nCols) : nRows(nRows), nCols(n
     timeBoard.w = 192;
     timeBoard.h = 71;
 
-    gameOver = false;
-
-    //Timer time
-    time = 120 * 1000; //miliseconds
+    gameover = false;
 }
 
 int GameBoard::scoreCalculate() {
@@ -83,7 +80,6 @@ void GameBoard::refill() {
 
 void GameBoard::renderStart() {
     engine.startTexture.renderRect(NULL);
-    SDL_Rect rect = {300, 225, 200, 200};
     engine.render();
 }
 
@@ -111,8 +107,8 @@ void GameBoard::renderTimer() {
         //Initialize score
         score = 0;
     }
-    if(!engine.timer.countdown(time)) {
-        gameOver = true;
+    if(!gameover && engine.timer.countdown(time)) {
+        gameover = true;
     }
 
     std::string minutes = std::to_string(engine.timer.time / 60);
