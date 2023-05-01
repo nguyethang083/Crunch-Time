@@ -17,11 +17,14 @@ class Timer {
     public:
 		Timer();
 
+        int time;
+
 		//Clock actions
 		void start();
 		void stop();
 		void pause();
 		void unpause();
+        bool countdown(Uint32 timer);
 
 		//Gets the timer's time
 		Uint32 getTicks();

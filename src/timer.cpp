@@ -56,6 +56,19 @@ void Timer::unpause() {
     }
 }
 
+bool Timer::countdown(Uint32 timer) {
+    if(!isStarted()) {
+        start();
+    }
+    int time_left = timer - getTicks();
+    time = time_left / 1000;
+    if(time_left <= 0) {
+        stop();
+        return false;
+    }
+    return true;
+}
+
 Uint32 Timer::getTicks() {
 	//The actual timer time
 	Uint32 time = 0;
@@ -68,7 +81,7 @@ Uint32 Timer::getTicks() {
             time = pausedTicks;
         } else {
             //Return the current time minus the start time
-            time = (SDL_GetTicks() - startTicks) / 1000;
+            time = SDL_GetTicks() - startTicks;
         }
     }
 

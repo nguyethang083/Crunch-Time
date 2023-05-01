@@ -1,5 +1,5 @@
 #include "engine.h"
-#include "common.h"
+#include "log.h"
 #include <bits/stdc++.h>
 
 Engine::Engine() : WINDOW_WIDTH(800), WINDOW_HEIGHT(600), TITLE("Crunch Time") {
@@ -52,26 +52,34 @@ bool Engine::init() {
 }
 
 bool Engine::initTexture() {
-    if (boardTexture.loadFile("assets/game_background_4.png") && //Initialize board texture
-        candyTexture[Red].loadFile("assets/red.jpg") && //Initialize candies texture
+    if (boardTexture.loadFile("assets/game_background_4.png") &&
+        candyTexture[Red].loadFile("assets/red.jpg") &&
         candyTexture[Green].loadFile("assets/green.jpg") &&
         candyTexture[Blue].loadFile("assets/blue.jpg") &&
         candyTexture[Orange].loadFile("assets/orange.jpg") &&
         candyTexture[Pink].loadFile("assets/pink.jpg") &&
+        candyTexture[Gold].loadFile("assets/gold.jpg") &&
         selectorTexture.loadFile("assets/selector.png") && 
-        scoreTexture.loadFile("assets/play button.png") && //Initialize selector texture
-        timerTexture.loadFile("assets/timer bg.png")) // Initialize timer background
+        scoreTexture.loadFile("assets/play button.png") && 
+        timerTexture.loadFile("assets/timer bg.png") &&
+        startTexture.loadFile("assets/start_bg_01.png") &&
+        endTexture.loadFile("assets/endBackground.png"))
     return true;
+
     else return false;
 }
 
 bool Engine::initFont() {
-    if (gFont[0].openFont("assets/fonts/LeOsler_Rough-Regular.ttf", 40) && //Initialize game font
-        gFont[1].openFont("assets/fonts/LeOsler_Rough-Regular.ttf", 40) &&
-        scoreFont.openFont("assets/fonts/LeOsler_Rough-Regular.ttf", 35) && //Initialize score font
-        timerFont.openFont("assets/fonts/LeOsler_Rough-Regular.ttf", 55)) //Initialize timer font
-    return true;
-    else return false;
+    //Open font
+    if (!scoreText.openFont(30) || !timeText.openFont(30) || !score.openFont(35) ||
+        !times.openFont(75))
+    return false;
+
+    //Load static text
+    else if(!scoreText.loadText("score") || !timeText.loadText("time"))
+    return false;
+
+    else return true;
 }
 
 void Engine::exit() {
@@ -86,11 +94,4 @@ void Engine::exit() {
 
 void Engine::render() {
     SDL_RenderPresent(renderer);
-}
-
-void Engine::renderClear(SDL_Rect* rect) {
-    if(rect != NULL) {
-        SDL_RenderFillRect(renderer, rect);
-    }
-    else SDL_RenderClear(renderer);
 }

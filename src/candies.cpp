@@ -23,7 +23,7 @@ void Candy::renderCandy() {
     for(int x = 0; x < nRows; x++) {
         for(int y = 0; y < nCols; y++) {
             int COLOR = board[x][y];
-            engine.candyTexture[COLOR].render(&square[x][y]);
+            engine.candyTexture[COLOR].renderRect(&square[x][y]);
         }
     }
 }
@@ -83,10 +83,10 @@ bool Candy::existMatch() {
 void Candy::renderSelector(int selectedX, int selectedY, int x, int y) {
     renderCandy();
     if(selected){
-        engine.selectorTexture.render(&square[selectedX][selectedY]);
+        engine.selectorTexture.renderRect(&square[selectedX][selectedY]);
     }
     if(pressed) {
-        engine.selectorTexture.render(&square[x][y]);
+        engine.selectorTexture.renderRect(&square[x][y]);
     }
     engine.render();
 }

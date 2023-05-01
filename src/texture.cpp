@@ -1,10 +1,9 @@
 #include "texture.h"
-#include "common.h"
+#include "log.h"
 
 Texture::Texture() {
 	//Init
 	texture = NULL;
-	font = NULL;
 	width = 0;
 	height = 0;
 }
@@ -28,45 +27,17 @@ bool Texture::loadFile(std::string path) {
 	return texture != NULL;
 }
 
-bool Texture::openFont(std::string path, int size) {
-	if(font != NULL) {
-		TTF_CloseFont(font);
-	}
-
-	TTF_Font* newFont = NULL;
-	newFont = TTF_OpenFont(path.c_str(), size);
-	if(newFont == NULL) {
-		LogTTF("TTF_OpenFont");
-	}
-	font = newFont;
-	return font != NULL;
+void Texture::renderRect(SDL_Rect* rect) {
+	//Render to screen
+	SDL_RenderCopy(renderer, texture, NULL, rect);
 }
 
-bool Texture::loadText(std::string textureText) {
-	//Get rid of preexisting texture
-	free();
+void Texture::renderNewRect(int x, int y) {
+	//Set rendering space and render to screen
+	SDL_Rect rect = {x, y, width, height};
 
-	SDL_Color textColor = {255, 255, 255};
-
-	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderText_Solid(font, textureText.c_str(), textColor);
-	if(textSurface == NULL) {
-		LogTTF("TTF_RenderText");
-	} else {
-        texture = SDL_CreateTextureFromSurface(renderer, textSurface);
-		if(texture == NULL) {
-			LogSDL("CreateTextureFromSurface");
-		} else {
-			//Get image dimensions
-			width = textSurface->w;
-			height = textSurface->h;
-		}
-
-		//Get rid of old surface
-		SDL_FreeSurface(textSurface);
-	}
-
-	return texture != NULL;
+	//Render to screen
+	SDL_RenderCopy(renderer, texture, NULL, &rect);	
 }
 
 void Texture::free() {
@@ -77,17 +48,4 @@ void Texture::free() {
 		width = 0;
 		height = 0;
 	}
-}
-
-void Texture::render(SDL_Rect* renderRect) {
-	//Render to screen
-	SDL_RenderCopy(renderer, texture, NULL, renderRect);
-}
-
-void Texture::renderNew(int x, int y) {
-	//Set rendering space and render to screen
-	SDL_Rect renderRect = {x, y, width, height};
-
-	//Render to screen
-	SDL_RenderCopy(renderer, texture, NULL, &renderRect);
 }

@@ -23,12 +23,17 @@ class GameBoard {
         SDL_Rect scoreBoard;
 
         GameBoard(const int& nRows, const int& nCols);
+        
+        //Game start screen
+        void renderStart();
+        //Game end screen
+        void renderEnd();
 
         //Render game boards
         void renderBoard(int score);
 
-        //Render timer
-        int time;
+        Uint32 time;
+        //Render timer;
         void renderTimer();
         SDL_Rect timeBoard;
 
@@ -42,6 +47,8 @@ class GameBoard {
 
         //Refill candies
         void refill();
+
+        bool gameOver;
 
 };
 

@@ -1,9 +1,6 @@
 #include "gameboard.h"
 
 GameBoard::GameBoard(const int& nRows, const int& nCols) : nRows(nRows), nCols(nCols) {
-    //Init score
-    score = 0;
-    
     //Init board
     board.resize(nRows, vector<int>(nCols));  
 
@@ -25,7 +22,7 @@ GameBoard::GameBoard(const int& nRows, const int& nCols) : nRows(nRows), nCols(n
     scoreBoard.x = 15;
     scoreBoard.y = 100;
     scoreBoard.w = 192;
-    scoreBoard.h = 50;
+    scoreBoard.h = 43;
 
     //Initialize time board
     timeBoard.x = 15;
@@ -33,12 +30,10 @@ GameBoard::GameBoard(const int& nRows, const int& nCols) : nRows(nRows), nCols(n
     timeBoard.w = 192;
     timeBoard.h = 71;
 
-    engine.gFont[0].loadText("score");
-    engine.gFont[1].loadText("time");
+    gameOver = false;
 
     //Timer time
-    time = 120;
-    engine.timer.start();
+    time = 120 * 1000; //miliseconds
 }
 
 int GameBoard::scoreCalculate() {
@@ -86,23 +81,42 @@ void GameBoard::refill() {
     }
 }
 
+void GameBoard::renderStart() {
+    engine.startTexture.renderRect(NULL);
+    SDL_Rect rect = {300, 225, 200, 200};
+    engine.render();
+}
+
+void GameBoard::renderEnd() {
+    engine.endTexture.renderRect(NULL);
+    engine.score.renderText(400, 340, NULL);
+    engine.render();
+}
+
 void GameBoard::renderBoard(int score) {
-    engine.boardTexture.render(NULL);
+    engine.boardTexture.renderRect(NULL);
     renderScore(score);
     renderTimer();
 }
 
 void GameBoard::renderScore(int score) {
-    engine.scoreTexture.render(&scoreBoard);
-    engine.gFont[0].renderNew(70, 50);
-    engine.scoreFont.loadText(std::to_string(score));
-    engine.scoreFont.renderNew(25, 105);
+    engine.scoreTexture.renderRect(&scoreBoard);
+    engine.scoreText.renderText(70, 70, NULL);
+    engine.score.loadText(std::to_string(score));
+    engine.score.renderText(25, -1, &scoreBoard);
 }
 
 void GameBoard::renderTimer() {
-    int time_left = time - engine.timer.getTicks();
-    std::string minutes = std::to_string(time_left / 60);
-    std::string seconds = std::to_string(time_left % 60);
+    if(!engine.timer.isStarted()) {
+        //Initialize score
+        score = 0;
+    }
+    if(!engine.timer.countdown(time)) {
+        gameOver = true;
+    }
+
+    std::string minutes = std::to_string(engine.timer.time / 60);
+    std::string seconds = std::to_string(engine.timer.time % 60);
 
     if(std::stoi(minutes) < 10) {
         minutes = "0" + minutes;
@@ -111,10 +125,10 @@ void GameBoard::renderTimer() {
         seconds = "0" + seconds;
     }
 
-    engine.timerTexture.render(&timeBoard);
-    engine.gFont[1].renderNew(70, 350);
-    engine.timerFont.loadText(minutes + ":" + seconds);
-    engine.timerFont.renderNew(40, 405);
+    engine.timerTexture.renderRect(&timeBoard);
+    engine.timeText.renderText(85, 370, NULL);
+    engine.times.loadText(minutes + ":" + seconds);
+    engine.times.renderText(-1, -1, &timeBoard);
 }
 
 
