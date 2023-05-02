@@ -41,7 +41,7 @@ int GameBoard::scoreCalculate() {
                 count++;
         }
     }
-    return (count / 3) * 1000 + (count % 3) * (rand() % 10 + 345);
+    return (count / 3) * 750 + (count % 3) * ((rand() % 6) * 10 + 250);
 }
 
 void GameBoard::clear() {

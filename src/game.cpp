@@ -9,7 +9,7 @@ Game::Game(const int &nRows, const int &nCols, int time) : candy(nRows, nCols, t
     candy.updateCandy();
 
     x = y = 0;
-    loop();
+    run();
 }
 
 void Game::startGame() {
@@ -65,7 +65,7 @@ void Game::updateGame() {
     }
 }
 
-void Game::loop() {
+void Game::run() {
     while(running && SDL_WaitEvent(&e)) {
         if(e.type == SDL_QUIT)
             running = false;
@@ -79,6 +79,7 @@ void Game::loop() {
                     candy.pressed = true;
                 }
                 else keyControl();
+                //TimerID event
                 candy.renderSelector(selectedX, selectedY, x, y);
                 updateGame();
             }
@@ -117,6 +118,7 @@ void Game::keyControl() {
             else if(x == -1)
                 x = nRows - x - 2;
             break;
+
         case SDLK_DOWN: case SDLK_s:
             x++;
             if(candy.selected) {
@@ -129,6 +131,7 @@ void Game::keyControl() {
             else if(x == nRows)
                 x = 0;
             break;
+
         case SDLK_LEFT: case SDLK_a:
             y--;
             if(candy.selected) {
@@ -141,6 +144,7 @@ void Game::keyControl() {
             else if(y == -1)
                 y = nCols - y - 2;
             break;
+
         case SDLK_RIGHT: case SDLK_d:
             y++;
             if(candy.selected) {
@@ -153,6 +157,7 @@ void Game::keyControl() {
             else if(y == nRows)
                 y = 0;
             break;
+
         case SDLK_RETURN: case SDLK_SPACE:
             swapCandies();
             break;
@@ -164,16 +169,31 @@ void Game::mouseControl() {
     switch(e.type) {
         case SDL_MOUSEMOTION:
             if(candy.selected) {
-                if( x > selectedX + 1 || x < selectedX - 1 || 
-                    y > selectedY + 1 || y < selectedY - 1 ||
-                    x > selectedX && y > selectedY || x < selectedX && y < selectedY ||
-                    x > selectedX && y < selectedY || x < selectedX && y > selectedY) {
+                if(!swapCheck())
                     candy.pressed = false;
-                }
+            
+                if(click)
+                    drag = true;
+                else drag = false;
             }
             break;
+
         case SDL_MOUSEBUTTONDOWN:
-            swapCandies();
+            click = true;
+            if(drag) {
+                selectedX = x;
+                selectedY = y;
+                candy.selected = true;
+            }
+            else swapCandies();
+            break;
+
+        case SDL_MOUSEBUTTONUP:
+            if(drag) {
+                swapCandies();
+            }
+            else click = false;
+            drag = false;
             break;
     }
 }
@@ -185,7 +205,7 @@ void Game::swapCandies() {
         candy.selected = true;
     }
     else {
-        if(x != selectedX || y != selectedY) {
+        if(swapCheck()) {
             std::swap(candy.board[selectedX][selectedY], candy.board[x][y]);
             candy.updateCandy();
             while(delay.countdown(300));
@@ -222,4 +242,11 @@ Uint32 Game::callback(Uint32 interval, void* param) {
     return(interval);
 }
         
-    
+bool Game::swapCheck() {
+    if (x > selectedX + 1 || x < selectedX - 1 || 
+        y > selectedY + 1 || y < selectedY - 1 ||
+        x > selectedX && y > selectedY || x < selectedX && y < selectedY ||
+        x > selectedX && y < selectedY || x < selectedX && y > selectedY)
+        return false;
+    else return true;
+}   

@@ -15,6 +15,7 @@ class Game {
 
         Candy candy;
 
+        //Board size
         int nRows, nCols;
 
         //Coordinate
@@ -23,15 +24,21 @@ class Game {
         //Selected coordinate
         int selectedX, selectedY;
 
-        //Keyboard event
+        //Keyboard handle
         void keyControl();
-        //Mouse event
+        
+        //Mouse handle
         void mouseControl();
+        bool click; //Check is mouse was clicked
+        bool drag; //Check if mouse is dragging
 
-        //Swap 2 candies
+        //Check if candies can be swapped
+        bool swapCheck();
+        //Swap candies
         void swapCandies();
-
-        void loop();
+        
+        //Game loop
+        void run();
 
         //Update game state
         void updateGame();

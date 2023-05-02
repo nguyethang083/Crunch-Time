@@ -1,8 +1,9 @@
 #include "game.h"
-#define VERSION 2.2
+#define VERSION 2.2.5
 
-/* v2.2 changelog:
-    - Add mouse support
+/* v2.2.5 changelog:
+    - Improve mouse support
+    - Fix swapping logic
     - Modify score calculation
 */
 
