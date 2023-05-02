@@ -3,6 +3,7 @@
 Game::Game(const int &nRows, const int &nCols, int time) : candy(nRows, nCols, time), nRows(nRows), nCols(nCols) {
     gameStarted = false;
     running = true;
+    gameMode = Time;
 
     startGame();
 
@@ -16,7 +17,13 @@ void Game::startGame() {
             running = false;
         else {
             candy.renderStart();
-            if((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN) || e.type == SDL_MOUSEBUTTONDOWN) {
+            if(e.type == SDL_MOUSEBUTTONDOWN) {
+                SDL_GetMouseState(&pos.x, &pos.y);
+                if(SDL_PointInRect(&pos, &candy.modeSelect)) {
+                    gameMode = gameMode == Time ? Zen : Time;
+                }
+            }
+            else if((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN)) {
                 start();
             }
         }
@@ -30,13 +37,20 @@ void Game::endGame() {
         candy.engine.endSFX.playSFX();
         candy.engine.music.stopMusic();
     }
-    if((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN) || e.type == SDL_MOUSEBUTTONDOWN) {
+    if(e.type == SDL_KEYDOWN) {
+        if(e.key.keysym.sym == SDLK_ESCAPE)
+            startGame();
+        else if(e.key.keysym.sym == SDLK_RETURN)
+            start();
         gameover = false;
         start();
     }
 }
 
 void Game::start() {
+    gameover = false;
+    highscore = &candy.engine.savedHighscore[gameMode];
+
     candy.engine.startSFX.playSFX();
     SDL_Delay(1000);
     candy.startNotice();
@@ -79,7 +93,9 @@ void Game::run() {
         if(e.type == SDL_QUIT)
             running = false;
         if(!candy.existHint()) {
-            candy.randomize();
+            if(gameMode == Zen)
+                gameover = true; 
+            else candy.randomize();
         }
         if(gameover) {
             if(gameStarted) {
@@ -89,6 +105,7 @@ void Game::run() {
                 if(!candy.existMatch()) {
                     SDL_Delay(1000);
                 }
+                candy.engine.save();
             }
             endGame();
         }
@@ -98,11 +115,12 @@ void Game::run() {
                 candy.hint = true;
             }
             if(e.type == SDL_KEYDOWN) {
-                if(!pressed) {
+                if(e.key.keysym.sym == SDLK_ESCAPE)
+                    gameover = true;
+                else if(!pressed) {
                     pressed = true;
                 }
                 else keyControl();
-                //TimerID event
                 candy.renderSelector(selectedX, selectedY, x, y);
                 updateGame();
             }
@@ -128,7 +146,7 @@ void Game::run() {
 }
 
 void Game::keyControl() {
-    switch(e.key.keysym.sym){
+    switch(e.key.keysym.sym) {
         case SDLK_UP: case SDLK_w:
             x--;
             if(selected) {

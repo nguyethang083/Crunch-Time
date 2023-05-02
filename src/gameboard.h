@@ -49,6 +49,9 @@ class GameBoard {
         Sint32 score;
         void scoreCalculate();
 
+        //Mode select
+        SDL_Rect modeSelect;
+
         //Clear matching candies
         void clear();
 

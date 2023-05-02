@@ -98,7 +98,7 @@ bool Engine::initTexture() {
 
 bool Engine::initFont() {
     //Open font
-    if (!scoreText.openFont(30) || !highscoreText.openFont(30) || !timeText.openFont(30) ||
+    if (!mode.openFont(30) || !scoreText.openFont(30) || !highscoreText.openFont(30) || !timeText.openFont(30) ||
         !scores.openFont(35) || !highscores.openFont(35) || !times.openFont(75) || !startNotice.openFont(100))
     return false;
 
@@ -122,12 +122,16 @@ void Engine::initSave() {
     if(save == NULL) {
         Error("Warning: Unable to open save file!");
         //Initialize data
-        savedHighscore = 0;    
+        for(int i = 0; i < Total_Mode; i++) {
+            savedHighscore[i] = 0;  
+        }   
     }
     //File exists
     else {
         //Load data
-        SDL_RWread(save, &savedHighscore, sizeof(Sint32), 1);
+        for(int i = 0; i < Total_Mode; i++) {
+            SDL_RWread(save, &savedHighscore[i], sizeof(Sint32), 1);
+        }
 
         //Close file handler
         SDL_RWclose(save);
@@ -142,7 +146,9 @@ bool Engine::save() {
     }
     if(save != NULL) {
         //Write to save file
-        SDL_RWwrite(save, &highscore, sizeof(Sint32), 1 );
+        for(int i = 0; i < Total_Mode; i++) {
+            SDL_RWwrite(save, &savedHighscore[i], sizeof(Sint32), 1);
+        }
 
         //Close file handler
         SDL_RWclose(save);

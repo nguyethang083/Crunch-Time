@@ -14,6 +14,9 @@ class Timer {
 		bool paused;
 		bool started;
 
+		//Gets the timer's time
+		Uint32 getTicks();
+
     public:
 		Timer();
 
@@ -25,9 +28,6 @@ class Timer {
 		void pause();
 		void unpause();
         bool countdown(Uint32 timer);
-
-		//Gets the timer's time
-		Uint32 getTicks();
 
 		//Checks timer's status
 		bool isStarted();

@@ -3,6 +3,7 @@
 
 /* v2.5.1 changelog:
     - Fix wrong score calculation after randomize board
+    - Add game modes
 */
 
 int main(int argc, char* args[]) {

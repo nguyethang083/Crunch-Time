@@ -1,6 +1,7 @@
 #include "gameboard.h"
 
 GameBoard::GameBoard(const int &nRows, const int &nCols, int time) : nRows(nRows), nCols(nCols), time(time * 1000) {
+    score = 0;
     //Init board
     board.resize(nRows, vector<int>(nCols));  
 
@@ -35,6 +36,12 @@ GameBoard::GameBoard(const int &nRows, const int &nCols, int time) : nRows(nRows
     timeBoard.y = 400;
     timeBoard.w = 192;
     timeBoard.h = 71;
+
+    //Initialize mode select box
+    modeSelect.x = 325;
+    modeSelect.y = 425;
+    modeSelect.w = 150;
+    modeSelect.h = 50;
 }
 
 void GameBoard::scoreCalculate() {
@@ -51,7 +58,7 @@ void GameBoard::scoreCalculate() {
 void GameBoard::clear() {
     if(!randomized)
         scoreCalculate();
-    highscore = score > highscore ? score : highscore;
+    *highscore = score > *highscore ? score : *highscore;
     
     for(int row = 0; row < nRows; row++) {
         for(int col = 0; col < nCols; col++) {
@@ -87,6 +94,18 @@ void GameBoard::refill() {
 
 void GameBoard::renderStart() {
     engine.startTexture.renderTexture();
+    
+    std::string mode;
+    switch(gameMode) {
+        case Time:
+            mode = "Time";
+            break;
+        case Zen:
+            mode = "Zen";
+            break;
+    }
+    engine.mode.loadText("< " + mode + " mode >");
+    engine.mode.renderText(-1, -1, &modeSelect);
     engine.render();
 }
 
@@ -101,7 +120,8 @@ void GameBoard::renderBoard() {
     engine.boardTexture.renderTexture();
     renderScore();
     renderHighScore();
-    renderTimer();
+    if(gameMode == Time)
+        renderTimer();
 }
 
 void GameBoard::renderScore() {
@@ -114,7 +134,7 @@ void GameBoard::renderScore() {
 void GameBoard::renderHighScore() {
     engine.scoreTexture.renderTexture(&highscoreBoard);
     engine.highscoreText.renderText(50, 70);
-    engine.highscores.loadText(std::to_string(highscore));
+    engine.highscores.loadText(std::to_string(*highscore));
     engine.highscores.renderText(25, -1, &highscoreBoard);
 }
 

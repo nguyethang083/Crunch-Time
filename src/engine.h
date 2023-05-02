@@ -8,6 +8,9 @@
 //Candies in squares
 enum Candies{Destroyed, Red, Green, Blue, Orange, Pink, Gold, Total};
 
+//Game modes
+enum GameModes{Time, Zen, Total_Mode};
+
 class Engine {
     private:
         //Window size
@@ -36,9 +39,6 @@ class Engine {
         //Read save file
         void initSave();
 
-        //Save high score to save file
-        bool save();
-
         void exit();
 
     public:
@@ -46,7 +46,7 @@ class Engine {
         ~Engine();
 
         //Saved high score from save file
-        Sint32 savedHighscore;
+        Sint32 savedHighscore[Total_Mode];
 
         Timer timer; 
         //Textures
@@ -60,6 +60,7 @@ class Engine {
         Texture endTexture; //End screen texture
 
         //Texts
+        Text mode;
         Text scores; //Score
         Text highscores; //High score
         Text times; //Remaing time
@@ -73,6 +74,9 @@ class Engine {
         Sound startSFX;
         Sound endSFX;
         Sound matchSFX[3];
+
+        //Save high score to save file
+        bool save();
 
         //Generate random number
         int getRandom();

@@ -8,6 +8,9 @@ class Sound {
         Mix_Music* music;
         Mix_Chunk* sfx;
 
+        //Deallocates sound 
+        void free();
+
     public:
         Sound();
         ~Sound();
@@ -21,8 +24,6 @@ class Sound {
         void stopMusic();
         void playSFX();
 
-        //Deallocates sound 
-        void free();
 };
 
 #endif
