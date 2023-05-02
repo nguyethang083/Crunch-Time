@@ -49,8 +49,10 @@ class Engine {
 
         //Texts
         Text score; //Score
+        Text highscore; //High score
         Text times; //Remaing time
         Text scoreText; // "score" text
+        Text highscoreText; //"high score" text
         Text timeText; // "time" text
 
         //Sounds

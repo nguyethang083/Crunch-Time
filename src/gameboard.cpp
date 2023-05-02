@@ -20,9 +20,15 @@ GameBoard::GameBoard(const int &nRows, const int &nCols, int time) : nRows(nRows
 
     //Initialize score board
     scoreBoard.x = 15;
-    scoreBoard.y = 100;
+    scoreBoard.y = 200;
     scoreBoard.w = 192;
     scoreBoard.h = 43;
+
+    //Initialize highscore board
+    highscoreBoard.x = 15;
+    highscoreBoard.y = 100;
+    highscoreBoard.w = 192;
+    highscoreBoard.h = 43;
 
     //Initialize time board
     timeBoard.x = 15;
@@ -30,6 +36,7 @@ GameBoard::GameBoard(const int &nRows, const int &nCols, int time) : nRows(nRows
     timeBoard.w = 192;
     timeBoard.h = 71;
 
+    highscore = 0;
 }
 
 int GameBoard::scoreCalculate() {
@@ -45,6 +52,7 @@ int GameBoard::scoreCalculate() {
 
 void GameBoard::clear() {
     score += scoreCalculate();
+    highscore = score > highscore ? score : highscore;
     for(int row = 0; row < nRows; row++) {
         for(int col = 0; col < nCols; col++) {
             if(pendingRemoval[row][col]) {
@@ -88,17 +96,25 @@ void GameBoard::renderEnd() {
     engine.render();
 }
 
-void GameBoard::renderBoard(int score) {
+void GameBoard::renderBoard(Sint32 score) {
     engine.boardTexture.renderRect(NULL);
     renderScore(score);
+    renderHighScore(highscore);
     renderTimer();
 }
 
-void GameBoard::renderScore(int score) {
+void GameBoard::renderScore(Sint32 score) {
     engine.scoreTexture.renderRect(&scoreBoard);
-    engine.scoreText.renderText(70, 70, NULL);
+    engine.scoreText.renderText(70, 170, NULL);
     engine.score.loadText(std::to_string(score));
     engine.score.renderText(25, -1, &scoreBoard);
+}
+
+void GameBoard::renderHighScore(Sint32 score) {
+    engine.scoreTexture.renderRect(&highscoreBoard);
+    engine.highscoreText.renderText(50, 70, NULL);
+    engine.highscore.loadText(std::to_string(highscore));
+    engine.highscore.renderText(25, -1, &highscoreBoard);
 }
 
 void GameBoard::renderTimer() {
@@ -107,6 +123,7 @@ void GameBoard::renderTimer() {
         score = 0;
     }
     if(!gameover && engine.timer.countdown(time)) {
+        engine.timer.stop();
         gameover = true;
     }
 

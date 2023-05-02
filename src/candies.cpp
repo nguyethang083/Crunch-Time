@@ -112,10 +112,8 @@ bool Candy::existHint() {
 }
 
 void Candy::displayHint() {
-    if(existHint()) {
-        engine.hintTexture.renderRect(&square[hintX][hintY]);
-        engine.hintTexture.renderRect(&square[hintX_][hintY_]);
-    }
+    engine.hintTexture.renderRect(&square[hintX][hintY]);
+    engine.hintTexture.renderRect(&square[hintX_][hintY_]);
 }
 
 void Candy::renderSelector(int selectedX, int selectedY, int x, int y) {

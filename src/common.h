@@ -12,4 +12,7 @@ extern bool gameover;
 //Check if a candy was selected
 extern bool pressed, selected;
 
+//High score
+extern Sint32 highscore;
+
 #endif

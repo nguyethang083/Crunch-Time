@@ -6,6 +6,7 @@ Game::Game(const int &nRows, const int &nCols, int time) : candy(nRows, nCols, t
 
     startGame();
     candy.randomize();
+    highscore = 0;
     candy.updateCandy();
 
     x = y = 0;
@@ -78,7 +79,7 @@ void Game::run() {
         if(!candy.existHint()) {
             gameover = true;
         }
-        if(gameover) {
+        if(gameover && !candy.existMatch()) {
             SDL_RemoveTimer(timerID);
             hint.stop();
             endGame();

@@ -28,7 +28,7 @@ class GameBoard {
         void renderEnd();
 
         //Render game boards
-        void renderBoard(int score);
+        void renderBoard(Sint32 score);
 
         //Render timer;
         SDL_Rect timeBoard;
@@ -37,9 +37,11 @@ class GameBoard {
 
         //Render score
         SDL_Rect scoreBoard;
-        void renderScore(int score);
-        int score;
-        int scoreCalculate();
+        SDL_Rect highscoreBoard;
+        void renderScore(Sint32 score);
+        void renderHighScore(Sint32 score);
+        Sint32 score;
+        Sint32 scoreCalculate();
 
         //Clear matching candies
         void clear();

@@ -1,11 +1,9 @@
 #include "game.h"
-#define VERSION 2.3
+#define VERSION 2.4
 
-/* v2.3 changelog:
-    - Add hint which automatically displays hint after x seconds
-    - Add additional game over condition based on hint
-    - Move some variables to global
-    - Modify score calculation
+/* v2.4 changelog:
+    - Add high score
+    - Fix a bug impacting score
 */
 
 int main(int argc, char* args[]) {

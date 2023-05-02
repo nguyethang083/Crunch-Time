@@ -59,6 +59,12 @@ class Game {
         static Uint32 callback(Uint32 interval, void* param);
     
     public:
+        /**
+         * Create a game board with nRows rows and nCols column
+         * \param nRows number of rows
+         * \param nCols number of column
+         * \param time game's timer
+        */
         Game(const int &nRows, const int &nCols, int time);
 
 };

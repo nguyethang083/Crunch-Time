@@ -80,12 +80,12 @@ bool Engine::initTexture() {
 
 bool Engine::initFont() {
     //Open font
-    if (!scoreText.openFont(30) || !timeText.openFont(30) || !score.openFont(35) ||
-        !times.openFont(75))
+    if (!scoreText.openFont(30) || !highscoreText.openFont(30) || !timeText.openFont(30) ||
+        !score.openFont(35) || !highscore.openFont(35) || !times.openFont(75))
     return false;
 
     //Load static text
-    else if(!scoreText.loadText("score") || !timeText.loadText("time"))
+    else if(!scoreText.loadText("score") || !highscoreText.loadText("high score") || !timeText.loadText("time"))
     return false;
 
     else return true;
