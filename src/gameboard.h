@@ -28,7 +28,10 @@ class GameBoard {
         void renderEnd();
 
         //Render game boards
-        void renderBoard(Sint32 score);
+        void renderBoard();
+
+        //Notice game is starting
+        void startNotice();
 
         //Render timer;
         SDL_Rect timeBoard;
@@ -38,8 +41,8 @@ class GameBoard {
         //Render score
         SDL_Rect scoreBoard;
         SDL_Rect highscoreBoard;
-        void renderScore(Sint32 score);
-        void renderHighScore(Sint32 score);
+        void renderScore();
+        void renderHighScore();
         Sint32 score;
         Sint32 scoreCalculate();
 

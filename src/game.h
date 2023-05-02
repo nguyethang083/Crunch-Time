@@ -44,14 +44,12 @@ class Game {
         //Update game state
         void updateGame();
 
-        
-        //Check if game has started
-        bool gameStarted;
-
         //Game state
         void startGame();
         void endGame();
-        bool gameEnded;
+        
+        //The actual start function
+        void start();
 
         //Check if game is running
         bool running;

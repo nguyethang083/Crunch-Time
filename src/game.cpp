@@ -1,13 +1,10 @@
 #include "game.h"
 
 Game::Game(const int &nRows, const int &nCols, int time) : candy(nRows, nCols, time), nRows(nRows), nCols(nCols) {
-    gameStarted = gameEnded = false;
+    gameStarted = false;
     running = true;
 
     startGame();
-    candy.randomize();
-    highscore = 0;
-    candy.updateCandy();
 
     x = y = 0;
     run();
@@ -19,31 +16,36 @@ void Game::startGame() {
             running = false;
         else {
             candy.renderStart();
-            if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN || e.type == SDL_MOUSEBUTTONDOWN) {
-                candy.engine.startSFX.playSFX();
-                while(delay.countdown(1000));
-                gameStarted = true;
-                candy.engine.music.playMusic();
-                timerID = SDL_AddTimer(1000, callback, NULL);
+            if(e.type == SDL_KEYDOWN && (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE)) {
+                start();
             }
         }
     }
 }
 
 void Game::endGame() {
-    if(!gameEnded) {
-        gameEnded = true;
+    if(gameStarted) {
+        gameStarted = false;
         candy.renderEnd();
         candy.engine.endSFX.playSFX();
         candy.engine.music.stopMusic();
     }
-    if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN || e.type == SDL_MOUSEBUTTONDOWN) {
-        gameover = gameEnded = false;
-        candy.engine.startSFX.playSFX();
-        timerID = SDL_AddTimer(1000, callback, NULL);
-        while(delay.countdown(750));
-        candy.engine.music.playMusic();
+    if(e.type == SDL_KEYDOWN && (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE)) {
+        gameover = false;
+        start();
     }
+}
+
+void Game::start() {
+    candy.engine.startSFX.playSFX();
+    while(delay.countdown(1000));
+    candy.startNotice();
+    while(delay.countdown(1000));
+    gameStarted = true;
+    candy.engine.music.playMusic();
+    timerID = SDL_AddTimer(1000, callback, NULL);
+    candy.randomize();
+    candy.updateCandy();
 }
 
 void Game::updateGame() {
@@ -77,16 +79,22 @@ void Game::run() {
         if(e.type == SDL_QUIT)
             running = false;
         if(!candy.existHint()) {
-            gameover = true;
+            candy.randomize();
         }
-        if(gameover && !candy.existMatch()) {
-            SDL_RemoveTimer(timerID);
-            hint.stop();
+        if(gameover) {
+            if(gameStarted) {
+                SDL_RemoveTimer(timerID);
+                hint.stop();
+                candy.hint = false;
+                if(!candy.existMatch()) {
+                    while(delay.countdown(1000));
+                }
+            }
             endGame();
         }
         else {
             //Start hint timer, display hint if return false
-            if(!hint.countdown(9000)) {
+            if(!hint.countdown(7000)) {
                 candy.hint = true;
             }
             if(e.type == SDL_KEYDOWN) {
@@ -241,6 +249,16 @@ void Game::swapCandies() {
     }
 }
 
+bool Game::swapCheck() {
+    if (x > selectedX + 1 || x < selectedX - 1 || 
+        y > selectedY + 1 || y < selectedY - 1 ||
+        x > selectedX && y > selectedY || x < selectedX && y < selectedY ||
+        x > selectedX && y < selectedY || x < selectedX && y > selectedY)
+        return false;
+    else return true;
+}
+
+
 Uint32 Game::callback(Uint32 interval, void* param) {
     SDL_Event event;
     SDL_UserEvent userevent;
@@ -255,13 +273,4 @@ Uint32 Game::callback(Uint32 interval, void* param) {
 
     SDL_PushEvent(&event);
     return(interval);
-}
-        
-bool Game::swapCheck() {
-    if (x > selectedX + 1 || x < selectedX - 1 || 
-        y > selectedY + 1 || y < selectedY - 1 ||
-        x > selectedX && y > selectedY || x < selectedX && y < selectedY ||
-        x > selectedX && y < selectedY || x < selectedX && y > selectedY)
-        return false;
-    else return true;
 }   

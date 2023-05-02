@@ -16,12 +16,16 @@ Engine::Engine() : WINDOW_WIDTH(800), WINDOW_HEIGHT(600), TITLE("Crunch Time") {
         Error("Unable to load Fonts!");
         exit();
     } else if(!initSound()) {
-        Error("Unable to load Sounds");
+        Error("Unable to load Sounds!");
         exit();
     }
+    else initSave();
 }
 
 Engine::~Engine() {
+    if(!save()) {
+        Error("Your data will not be saved!");
+    }
     exit();
 }
 
@@ -52,10 +56,25 @@ bool Engine::init() {
         LogSDL("CreateRenderer");
         success = false;
     }
+
+    cursorSurface = IMG_Load("assets/cursor.png");
+    if(cursorSurface == NULL) {
+        LogIMG("IMG_Load");
+        success = false;
+    }
+    cursor = SDL_CreateColorCursor(cursorSurface, 0, 0);
+    if (cursor == NULL) {
+        LogSDL("CreateColorCursor");
+        success = false;
+    }
+    SDL_FreeSurface(cursorSurface);
+    SDL_SetCursor(cursor);
+
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-    
+    if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
+			Error("Warning: Linear texture filtering not enabled!");
+    }
     return success;
 }
 
@@ -81,12 +100,12 @@ bool Engine::initTexture() {
 bool Engine::initFont() {
     //Open font
     if (!scoreText.openFont(30) || !highscoreText.openFont(30) || !timeText.openFont(30) ||
-        !score.openFont(35) || !highscore.openFont(35) || !times.openFont(75))
+        !scores.openFont(35) || !highscores.openFont(35) || !times.openFont(75) || !startNotice.openFont(100))
     return false;
 
     //Load static text
-    else if(!scoreText.loadText("score") || !highscoreText.loadText("high score") || !timeText.loadText("time"))
-    return false;
+    else if(!scoreText.loadText("score") || !highscoreText.loadText("high score") || !timeText.loadText("time") || !startNotice.loadText("START"))
+        return false;
 
     else return true;
 }
@@ -99,7 +118,45 @@ bool Engine::initSound() {
         else return true;
 }
 
+void Engine::initSave() {
+    SDL_RWops* save = SDL_RWFromFile("save.bin", "r+b");
+    if(save == NULL) {
+        Error("Warning: Unable to open save file!");
+        //Initialize data
+        savedHighscore = 0;    
+    }
+    //File exists
+    else {
+        //Load data
+        SDL_RWread(save, &savedHighscore, sizeof(Sint32), 1);
+
+        //Close file handler
+        SDL_RWclose(save);
+    }
+}
+
+bool Engine::save() {
+    SDL_RWops* save = SDL_RWFromFile("save.bin", "r+b");
+    if(save == NULL) {
+        //Create file for writing
+        save = SDL_RWFromFile("save.bin", "w+b");
+    }
+    if(save != NULL) {
+        //Write to save file
+        SDL_RWwrite(save, &highscore, sizeof(Sint32), 1 );
+
+        //Close file handler
+        SDL_RWclose(save);
+    } else {
+        LogSDL("Save");
+        return false;
+    }
+    return true;
+}
+
 void Engine::exit() {
+    SDL_FreeCursor(cursor);
+    cursor = NULL;
     SDL_DestroyRenderer(renderer);
     renderer = NULL;
     SDL_DestroyWindow(window);

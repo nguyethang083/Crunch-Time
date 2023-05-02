@@ -2,6 +2,7 @@
 
 Candy::Candy(const int &nRows, const int &nCols, int time) : GameBoard(nRows, nCols, time) {
     selected = pressed = hint = false;
+    highscore = engine.savedHighscore;
 }
 
 void Candy::randomize() {
@@ -11,15 +12,17 @@ void Candy::randomize() {
             board[i][j] = rand() % (Total - 1) + 1;
         }
     }
+    int temp = highscore;
     while(existMatch()) {
         clear();
         refill();
     }
+    highscore = temp;
     score = 0;
 }
 
 void Candy::renderCandy() {
-    renderBoard(score);
+    renderBoard();
     for(int x = 0; x < nRows; x++) {
         for(int y = 0; y < nCols; y++) {
             int COLOR = board[x][y];

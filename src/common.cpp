@@ -3,6 +3,9 @@
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
-bool gameover = false, pressed = false, selected = false;
+bool gameStarted = false; 
+bool gameover = false;
+bool pressed = false;
+bool selected = false;
 
 Sint32 highscore;
