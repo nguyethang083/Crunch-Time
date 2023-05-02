@@ -28,7 +28,7 @@ class Text {
 
 		/* Render text in center horizontally if x = -1, vertically if y = -1
 		   rect = NULL if render to entire screen	*/
-		void renderText(int x, int y, SDL_Rect* rect);
+		void renderText(int x, int y, SDL_Rect* rect = NULL);
 };
 
 #endif

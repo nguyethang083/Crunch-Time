@@ -16,7 +16,7 @@ void Game::startGame() {
             running = false;
         else {
             candy.renderStart();
-            if(e.type == SDL_KEYDOWN && (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE)) {
+            if((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN) || e.type == SDL_MOUSEBUTTONDOWN) {
                 start();
             }
         }
@@ -30,7 +30,7 @@ void Game::endGame() {
         candy.engine.endSFX.playSFX();
         candy.engine.music.stopMusic();
     }
-    if(e.type == SDL_KEYDOWN && (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE)) {
+    if((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN) || e.type == SDL_MOUSEBUTTONDOWN) {
         gameover = false;
         start();
     }
@@ -38,9 +38,9 @@ void Game::endGame() {
 
 void Game::start() {
     candy.engine.startSFX.playSFX();
-    while(delay.countdown(1000));
+    SDL_Delay(1000);
     candy.startNotice();
-    while(delay.countdown(1000));
+    SDL_Delay(1000);
     gameStarted = true;
     candy.engine.music.playMusic();
     timerID = SDL_AddTimer(1000, callback, NULL);
@@ -68,7 +68,7 @@ void Game::updateGame() {
         //Matching actions
         candy.clear();
         candy.updateCandy();
-        while(delay.countdown(700));
+        SDL_Delay(700);
         candy.refill();
         candy.updateCandy();
     }
@@ -87,7 +87,7 @@ void Game::run() {
                 hint.stop();
                 candy.hint = false;
                 if(!candy.existMatch()) {
-                    while(delay.countdown(1000));
+                    SDL_Delay(1000);
                 }
             }
             endGame();
@@ -231,11 +231,11 @@ void Game::swapCandies() {
         if(swapCheck()) {
             std::swap(candy.board[selectedX][selectedY], candy.board[x][y]);
             candy.updateCandy();
-            while(delay.countdown(300));
+            SDL_Delay(300);
             if(!candy.existMatch()) {
                 std::swap(candy.board[selectedX][selectedY], candy.board[x][y]);
                 candy.updateCandy();
-                while(delay.countdown(300));
+                SDL_Delay(300);
             }
             else x = y = 0;
             pressed = false;
@@ -252,8 +252,8 @@ void Game::swapCandies() {
 bool Game::swapCheck() {
     if (x > selectedX + 1 || x < selectedX - 1 || 
         y > selectedY + 1 || y < selectedY - 1 ||
-        x > selectedX && y > selectedY || x < selectedX && y < selectedY ||
-        x > selectedX && y < selectedY || x < selectedX && y > selectedY)
+        (x > selectedX && y > selectedY) || (x < selectedX && y < selectedY) ||
+        (x > selectedX && y < selectedY) || (x < selectedX && y > selectedY))
         return false;
     else return true;
 }

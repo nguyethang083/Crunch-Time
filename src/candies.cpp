@@ -6,19 +6,18 @@ Candy::Candy(const int &nRows, const int &nCols, int time) : GameBoard(nRows, nC
 }
 
 void Candy::randomize() {
+    randomized = true;
     //Create board
     for (int i = 0; i < nRows; i++) {
         for (int j = 0; j < nCols; j++) {
-            board[i][j] = rand() % (Total - 1) + 1;
+            board[i][j] = engine.getRandom();
         }
     }
-    int temp = highscore;
     while(existMatch()) {
         clear();
         refill();
     }
-    highscore = temp;
-    score = 0;
+    randomized = false;
 }
 
 void Candy::renderCandy() {
@@ -26,7 +25,7 @@ void Candy::renderCandy() {
     for(int x = 0; x < nRows; x++) {
         for(int y = 0; y < nCols; y++) {
             int COLOR = board[x][y];
-            engine.candyTexture[COLOR].renderRect(&square[x][y]);
+            engine.candyTexture[COLOR].renderTexture(&square[x][y]);
         }
     }
 }
@@ -37,12 +36,13 @@ void Candy::updateCandy() {
 }
 
 bool Candy::match3(const int &row, const int &col, const std::string &direction) {
-    int stepX, stepY;
+    int stepX = 0;
+    int stepY = 0;
     if(direction == "HORIZONTAL") {
-        stepX = 0, stepY = 1;
+        stepY = 1;
     }
     else if(direction == "VERTICAL") {
-        stepX = 1, stepY = 0;
+        stepX = 1;
     }
 
     //Starting value
@@ -115,8 +115,8 @@ bool Candy::existHint() {
 }
 
 void Candy::displayHint() {
-    engine.hintTexture.renderRect(&square[hintX][hintY]);
-    engine.hintTexture.renderRect(&square[hintX_][hintY_]);
+    engine.hintTexture.renderTexture(&square[hintX][hintY]);
+    engine.hintTexture.renderTexture(&square[hintX_][hintY_]);
 }
 
 void Candy::renderSelector(int selectedX, int selectedY, int x, int y) {
@@ -125,10 +125,10 @@ void Candy::renderSelector(int selectedX, int selectedY, int x, int y) {
         displayHint();
     }
     if(selected) {
-        engine.selectorTexture.renderRect(&square[selectedX][selectedY]);
+        engine.selectorTexture.renderTexture(&square[selectedX][selectedY]);
     }
     if(pressed) {
-        engine.selectorTexture.renderRect(&square[x][y]);
+        engine.selectorTexture.renderTexture(&square[x][y]);
     }
     engine.render();
 }

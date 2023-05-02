@@ -3,7 +3,6 @@
 #include <bits/stdc++.h>
 
 Engine::Engine() : WINDOW_WIDTH(800), WINDOW_HEIGHT(600), TITLE("Crunch Time") {
-    srand(time(NULL));
     success = true; 
     if(!init()) {
         Error("Unable to init Engine");
@@ -57,7 +56,7 @@ bool Engine::init() {
         success = false;
     }
 
-    cursorSurface = IMG_Load("assets/cursor.png");
+    SDL_Surface *cursorSurface = IMG_Load("assets/cursor.png");
     if(cursorSurface == NULL) {
         LogIMG("IMG_Load");
         success = false;
@@ -73,7 +72,7 @@ bool Engine::init() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
     if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-			Error("Warning: Linear texture filtering not enabled!");
+		Error("Warning: Linear texture filtering not enabled!");
     }
     return success;
 }
@@ -165,6 +164,13 @@ void Engine::exit() {
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();
+}
+
+int Engine::getRandom() {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist(1, Total-1);
+    return dist(rng);
 }
 
 void Engine::render() {

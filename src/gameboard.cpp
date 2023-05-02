@@ -37,7 +37,7 @@ GameBoard::GameBoard(const int &nRows, const int &nCols, int time) : nRows(nRows
     timeBoard.h = 71;
 }
 
-int GameBoard::scoreCalculate() {
+void GameBoard::scoreCalculate() {
     int count = 0;
     for(int row = 0; row < nRows; row++) {
         for(int col = 0; col < nCols; col++) {
@@ -45,12 +45,14 @@ int GameBoard::scoreCalculate() {
                 count++;
         }
     }
-    return (count / 3) * 750 + (count % 3) * ((rand() % 6) * 10 + 250);
+    score += (count / 3) * 750 + (count % 3) * (engine.getRandom() * 10 + 300);
 }
 
 void GameBoard::clear() {
-    score += scoreCalculate();
+    if(!randomized)
+        scoreCalculate();
     highscore = score > highscore ? score : highscore;
+    
     for(int row = 0; row < nRows; row++) {
         for(int col = 0; col < nCols; col++) {
             if(pendingRemoval[row][col]) {
@@ -77,41 +79,41 @@ void GameBoard::refill() {
     for(int row = 0; row < nRows; row++) {
         for(int col = 0; col < nCols; col++) {
             if(board[row][col] == Destroyed) {
-                board[row][col] = rand() % (Total - 1) + 1;
+                board[row][col] = engine.getRandom();
             }
         }
     }
 }
 
 void GameBoard::renderStart() {
-    engine.startTexture.renderRect(NULL);
+    engine.startTexture.renderTexture();
     engine.render();
 }
 
 void GameBoard::renderEnd() {
-    engine.endTexture.renderRect(NULL);
-    engine.scores.renderText(400, 340, NULL);
+    engine.endTexture.renderTexture();
+    engine.scores.renderText(400, 340);
     score = 0;
     engine.render();
 }
 
 void GameBoard::renderBoard() {
-    engine.boardTexture.renderRect(NULL);
+    engine.boardTexture.renderTexture();
     renderScore();
     renderHighScore();
     renderTimer();
 }
 
 void GameBoard::renderScore() {
-    engine.scoreTexture.renderRect(&scoreBoard);
-    engine.scoreText.renderText(70, 170, NULL);
+    engine.scoreTexture.renderTexture(&scoreBoard);
+    engine.scoreText.renderText(70, 170);
     engine.scores.loadText(std::to_string(score));
     engine.scores.renderText(25, -1, &scoreBoard);
 }
 
 void GameBoard::renderHighScore() {
-    engine.scoreTexture.renderRect(&highscoreBoard);
-    engine.highscoreText.renderText(50, 70, NULL);
+    engine.scoreTexture.renderTexture(&highscoreBoard);
+    engine.highscoreText.renderText(50, 70);
     engine.highscores.loadText(std::to_string(highscore));
     engine.highscores.renderText(25, -1, &highscoreBoard);
 }
@@ -138,15 +140,15 @@ void GameBoard::renderTimer() {
         seconds = "0" + seconds;
     }
 
-    engine.timerTexture.renderRect(&timeBoard);
-    engine.timeText.renderText(85, 370, NULL);
+    engine.timerTexture.renderTexture(&timeBoard);
+    engine.timeText.renderText(85, 370);
     engine.times.loadText(minutes + ":" + seconds);
     engine.times.renderText(-1, -1, &timeBoard);
 }
 
 void GameBoard::startNotice() {
     renderBoard();
-    engine.startNotice.renderText(-1, -1, NULL);
+    engine.startNotice.renderText(-1, -1);
     engine.render();
 }
 
