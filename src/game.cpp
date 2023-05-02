@@ -37,8 +37,7 @@ void Game::endGame() {
         candy.engine.music.stopMusic();
     }
     if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN || e.type == SDL_MOUSEBUTTONDOWN) {
-        candy.randomize();
-        candy.gameover = gameEnded = false;
+        gameover = gameEnded = false;
         candy.engine.startSFX.playSFX();
         timerID = SDL_AddTimer(1000, callback, NULL);
         while(delay.countdown(750));
@@ -49,6 +48,11 @@ void Game::endGame() {
 void Game::updateGame() {
     int count = 0;
     while(candy.existMatch()) {
+        //Stop hint timer because matched
+        hint.stop();
+        candy.hint = false;
+
+        //Choose which sfx to play
         count++;
         if(count == 1) {
             candy.engine.matchSFX[0].playSFX();
@@ -57,6 +61,8 @@ void Game::updateGame() {
             candy.engine.matchSFX[1].playSFX();
         }
         else candy.engine.matchSFX[2].playSFX();
+
+        //Matching actions
         candy.clear();
         candy.updateCandy();
         while(delay.countdown(700));
@@ -69,14 +75,22 @@ void Game::run() {
     while(running && SDL_WaitEvent(&e)) {
         if(e.type == SDL_QUIT)
             running = false;
-        if(candy.gameover) {
+        if(!candy.existHint()) {
+            gameover = true;
+        }
+        if(gameover) {
             SDL_RemoveTimer(timerID);
+            hint.stop();
             endGame();
         }
         else {
+            //Start hint timer, display hint if return false
+            if(!hint.countdown(9000)) {
+                candy.hint = true;
+            }
             if(e.type == SDL_KEYDOWN) {
-                if(!candy.pressed) {
-                    candy.pressed = true;
+                if(!pressed) {
+                    pressed = true;
                 }
                 else keyControl();
                 //TimerID event
@@ -84,7 +98,7 @@ void Game::run() {
                 updateGame();
             }
             if(e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
-                candy.pressed = true;
+                pressed = true;
                 SDL_GetMouseState(&pos.x, &pos.y);
                 for(int x_ = 0; x_ < nRows; x_++) {
                     for(int y_ = 0; y_ < nCols; y_++) {
@@ -108,7 +122,7 @@ void Game::keyControl() {
     switch(e.key.keysym.sym){
         case SDLK_UP: case SDLK_w:
             x--;
-            if(candy.selected) {
+            if(selected) {
                 y = selectedY;
                 if(x < 0)
                     x = selectedX;
@@ -121,7 +135,7 @@ void Game::keyControl() {
 
         case SDLK_DOWN: case SDLK_s:
             x++;
-            if(candy.selected) {
+            if(selected) {
                 y = selectedY;
                 if(x < 0)
                     x = selectedX;
@@ -134,7 +148,7 @@ void Game::keyControl() {
 
         case SDLK_LEFT: case SDLK_a:
             y--;
-            if(candy.selected) {
+            if(selected) {
                 x = selectedX;
                 if(y < 0)
                     y = selectedY;
@@ -147,7 +161,7 @@ void Game::keyControl() {
 
         case SDLK_RIGHT: case SDLK_d:
             y++;
-            if(candy.selected) {
+            if(selected) {
                 x = selectedX;
                 if(y < 0)
                     y = selectedY;
@@ -168,9 +182,9 @@ void Game::keyControl() {
 void Game::mouseControl() {
     switch(e.type) {
         case SDL_MOUSEMOTION:
-            if(candy.selected) {
+            if(selected) {
                 if(!swapCheck())
-                    candy.pressed = false;
+                    pressed = false;
             
                 if(click)
                     drag = true;
@@ -183,7 +197,7 @@ void Game::mouseControl() {
             if(drag) {
                 selectedX = x;
                 selectedY = y;
-                candy.selected = true;
+                selected = true;
             }
             else swapCandies();
             break;
@@ -199,10 +213,10 @@ void Game::mouseControl() {
 }
 
 void Game::swapCandies() {
-    if(!candy.selected) {
+    if(!selected) {
         selectedX = x;
         selectedY = y;
-        candy.selected = true;
+        selected = true;
     }
     else {
         if(swapCheck()) {
@@ -215,14 +229,14 @@ void Game::swapCandies() {
                 while(delay.countdown(300));
             }
             else x = y = 0;
-            candy.pressed = false;
+            pressed = false;
         }
         else {
             x = selectedX;
             y = selectedY;
-            candy.pressed = true;
+            pressed = true;
         }
-        candy.selected = false;
+        selected = false;
     }
 }
 

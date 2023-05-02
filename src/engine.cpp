@@ -68,6 +68,7 @@ bool Engine::initTexture() {
         candyTexture[Pink].loadFile("assets/pink.jpg") &&
         candyTexture[Gold].loadFile("assets/gold.jpg") &&
         selectorTexture.loadFile("assets/selector.png") && 
+        hintTexture.loadFile("assets/hint.png") &&
         scoreTexture.loadFile("assets/play button.png") && 
         timerTexture.loadFile("assets/timer bg.png") &&
         startTexture.loadFile("assets/start_bg_01.png") &&

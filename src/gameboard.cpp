@@ -30,7 +30,6 @@ GameBoard::GameBoard(const int &nRows, const int &nCols, int time) : nRows(nRows
     timeBoard.w = 192;
     timeBoard.h = 71;
 
-    gameover = false;
 }
 
 int GameBoard::scoreCalculate() {

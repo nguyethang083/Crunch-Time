@@ -1,7 +1,7 @@
 #include "candies.h"
 
 Candy::Candy(const int &nRows, const int &nCols, int time) : GameBoard(nRows, nCols, time) {
-    selected = pressed = false;
+    selected = pressed = hint = false;
 }
 
 void Candy::randomize() {
@@ -14,8 +14,8 @@ void Candy::randomize() {
     while(existMatch()) {
         clear();
         refill();
-        score = 0;
     }
+    score = 0;
 }
 
 void Candy::renderCandy() {
@@ -33,7 +33,7 @@ void Candy::updateCandy() {
     engine.render();
 }
 
-bool Candy::match3(const int &row, const int &col, const std::string& direction) {
+bool Candy::match3(const int &row, const int &col, const std::string &direction) {
     int stepX, stepY;
     if(direction == "HORIZONTAL") {
         stepX = 0, stepY = 1;
@@ -80,9 +80,50 @@ bool Candy::existMatch() {
     return exist;
 }
 
+bool Candy::existHint() {
+    vector<vector<int>> tempBoard = board;
+    vector<vector<bool>> tempPending = pendingRemoval;
+    for(int x = 0; x < nRows - 1; x++) {
+        for(int y = 0; y < nCols - 1; y++) {
+            //Horizontal check
+            std::swap(board[x][y], board[x+1][y]);
+            if(existMatch()) {
+                //Set hint position
+                hintX = x; hintY = y; hintX_ = x+1; hintY_ = y;
+                board = tempBoard;
+                pendingRemoval = tempPending;
+                return true;
+            }
+            else board = tempBoard;
+
+            //Vertical check
+            std::swap(board[x][y], board[x][y+1]);
+            if(existMatch()) {
+                //Set hint position
+                hintX = x; hintY = y; hintX_ = x; hintY_ = y+1;
+                board = tempBoard;
+                pendingRemoval = tempPending;
+                return true;
+            }
+            else board = tempBoard;
+        }
+    }
+    return false;
+}
+
+void Candy::displayHint() {
+    if(existHint()) {
+        engine.hintTexture.renderRect(&square[hintX][hintY]);
+        engine.hintTexture.renderRect(&square[hintX_][hintY_]);
+    }
+}
+
 void Candy::renderSelector(int selectedX, int selectedY, int x, int y) {
     renderCandy();
-    if(selected){
+    if(hint) {
+        displayHint();
+    }
+    if(selected) {
         engine.selectorTexture.renderRect(&square[selectedX][selectedY]);
     }
     if(pressed) {

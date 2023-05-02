@@ -12,6 +12,7 @@ class Game {
 
         //Delay function
         Timer delay;
+        Timer hint;
 
         Candy candy;
 

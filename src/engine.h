@@ -41,6 +41,7 @@ class Engine {
         Texture boardTexture; //Board texture
         Texture candyTexture[Total]; //Candies textures
         Texture selectorTexture; //Selector texture
+        Texture hintTexture; // Hint texture
         Texture scoreTexture; //Score texture
         Texture timerTexture; //Timer texture
         Texture startTexture; //Start screen texture
