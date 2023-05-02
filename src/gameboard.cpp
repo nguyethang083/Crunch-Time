@@ -1,6 +1,6 @@
 #include "gameboard.h"
 
-GameBoard::GameBoard(const int& nRows, const int& nCols, int time) : nRows(nRows), nCols(nCols), time(time * 1000) {
+GameBoard::GameBoard(const int &nRows, const int &nCols, int time) : nRows(nRows), nCols(nCols), time(time * 1000) {
     //Init board
     board.resize(nRows, vector<int>(nCols));  
 
@@ -41,7 +41,7 @@ int GameBoard::scoreCalculate() {
                 count++;
         }
     }
-    return (count / 3) * 100 + (count % 3) * (rand() % 10 + 30);
+    return (count / 3) * 1000 + (count % 3) * (rand() % 10 + 345);
 }
 
 void GameBoard::clear() {

@@ -6,7 +6,7 @@ class Candy : private GameBoard {
     private:
         friend class Game;
 
-        Candy(const int& nRows, const int& nCols, int time);
+        Candy(const int &nRows, const int &nCols, int time);
 
         //Render Candies
         void renderCandy();
@@ -18,7 +18,7 @@ class Candy : private GameBoard {
         void randomize();
 
         //Check if 3 candies are matching
-        bool match3(const int& row, const int& col, const std::string& direction);
+        bool match3(const int &row, const int &col, const std::string& direction);
 
         //Check if exists at least 3 candies matched
         bool existMatch();

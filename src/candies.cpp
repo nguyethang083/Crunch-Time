@@ -1,6 +1,6 @@
 #include "candies.h"
 
-Candy::Candy(const int& nRows, const int& nCols, int time) : GameBoard(nRows, nCols, time) {
+Candy::Candy(const int &nRows, const int &nCols, int time) : GameBoard(nRows, nCols, time) {
     selected = pressed = false;
 }
 
@@ -33,7 +33,7 @@ void Candy::updateCandy() {
     engine.render();
 }
 
-bool Candy::match3(const int& row, const int& col, const std::string& direction) {
+bool Candy::match3(const int &row, const int &col, const std::string& direction) {
     int stepX, stepY;
     if(direction == "HORIZONTAL") {
         stepX = 0, stepY = 1;

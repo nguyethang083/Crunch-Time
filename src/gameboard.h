@@ -22,7 +22,7 @@ class GameBoard {
 
         bool gameover;
 
-        GameBoard(const int& nRows, const int& nCols, int time);
+        GameBoard(const int &nRows, const int &nCols, int time);
         
         //Game start screen
         void renderStart();

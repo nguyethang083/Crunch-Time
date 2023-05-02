@@ -6,15 +6,27 @@ class Game {
     private:
         SDL_Event e;
         SDL_TimerID timerID;
+
+        //Mouse postion
+        SDL_Point pos;
+
+        //Delay function
         Timer delay;
 
         Candy candy;
+
+        int nRows, nCols;
 
         //Coordinate
         int x, y;
 
         //Selected coordinate
         int selectedX, selectedY;
+
+        //Keyboard event
+        void keyControl();
+        //Mouse event
+        void mouseControl();
 
         //Swap 2 candies
         void swapCandies();
@@ -39,7 +51,7 @@ class Game {
         static Uint32 callback(Uint32 interval, void* param);
     
     public:
-        Game(const int& nRows, const int& nCols, int time);
+        Game(const int &nRows, const int &nCols, int time);
 
 };
 

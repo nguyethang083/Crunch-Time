@@ -1,10 +1,9 @@
 #include "game.h"
-#define VERSION 2.1
+#define VERSION 2.2
 
-/* v2.1 changelog:
-    - Add music and sound effects
-    - Fix some bugs
-    - Clean up leftover
+/* v2.2 changelog:
+    - Add mouse support
+    - Modify score calculation
 */
 
 int main(int argc, char* args[]) {
