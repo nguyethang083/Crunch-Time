@@ -6,7 +6,7 @@ class Candy : private GameBoard {
     private:
         friend class Game;
 
-        Candy(const int &nRows, const int &nCols, int time);
+        Candy(const int &nRows, const int &nCols);
 
         //Render Candies
         void renderCandy();
@@ -26,11 +26,15 @@ class Candy : private GameBoard {
         //Hint handle
         bool existHint(); //Check if exist candies that can be matched
         int hintX, hintY, hintX_, hintY_; //Hint position
-        bool hint; //Check if hint is needed
+        bool needHint; //Check if hint is needed
         void displayHint(); //Display hint
+        Timer hint; //Hint timer
 
         //Draw selector
-        void renderSelector(int selectedX, int selectedY, int x, int y);
+        void renderSelector(const int &selectedX, const int &selectedY, const int &x, const int &y);
+
+        //Update game state
+        void updateGame();
 };
 
 #endif

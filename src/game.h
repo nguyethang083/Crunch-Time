@@ -8,10 +8,7 @@ class Game {
         SDL_TimerID timerID;
 
         //Mouse postion
-        SDL_Point pos;
-
-        //Delay function
-        Timer hint;
+        SDL_Point mousePos;
 
         Candy candy;
 
@@ -40,9 +37,6 @@ class Game {
         //Game loop
         void run();
 
-        //Update game state
-        void updateGame();
-
         //Game state
         void startGame();
         void endGame();
@@ -53,6 +47,9 @@ class Game {
         //Check if game is running
         bool running;
 
+        //Check if choose to exit
+        bool exit;
+
         static Uint32 callback(Uint32 interval, void* param);
     
     public:
@@ -62,7 +59,7 @@ class Game {
          * \param nCols number of column
          * \param time game's timer
         */
-        Game(const int &nRows, const int &nCols, int time);
+        Game(const int &nRows, const int &nCols);
 
 };
 

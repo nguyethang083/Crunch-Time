@@ -10,7 +10,7 @@ Sound::~Sound() {
     free();
 }
 
-bool Sound::loadMusic(std::string path) {
+bool Sound::loadMusic(const std::string &path) {
     free();
 
     music = Mix_LoadMUS(path.c_str());
@@ -21,7 +21,7 @@ bool Sound::loadMusic(std::string path) {
     else return true;
 }
 
-bool Sound::loadSFX(std::string path) {
+bool Sound::loadSFX(const std::string &path) {
     free();
 
     sfx = Mix_LoadWAV(path.c_str());

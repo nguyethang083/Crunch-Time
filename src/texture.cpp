@@ -10,7 +10,7 @@ Texture::~Texture() {
 	free();
 }
 
-bool Texture::loadFile(std::string path) {
+bool Texture::loadFile(const std::string &path) {
 	//Get rid of preexisting texture
 	free();
 

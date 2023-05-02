@@ -1,6 +1,6 @@
 #include "gameboard.h"
 
-GameBoard::GameBoard(const int &nRows, const int &nCols, int time) : nRows(nRows), nCols(nCols), time(time * 1000) {
+GameBoard::GameBoard(const int &nRows, const int &nCol) : nRows(nRows), nCols(nCols) {
     score = 0;
     //Init board
     board.resize(nRows, vector<int>(nCols));  
@@ -10,38 +10,27 @@ GameBoard::GameBoard(const int &nRows, const int &nCols, int time) : nRows(nRows
     int startX = 240, startY = 35;
     for(int row = 0; row < nRows; row++){
         for(int col = 0; col < nCols; col++){
-            square[row][col].x = col * 65 + startX;
-            square[row][col].y = row * 65 + startY;
-            square[row][col].w = 65;
-            square[row][col].h = 65;
+           square[row][col] = (SDL_Rect) {col * 65 + startX, row * 65 + startY, 65, 65}; 
         }
     }
 
     pendingRemoval.resize(nRows, vector<bool>(nCols));
 
     //Initialize score board
-    scoreBoard.x = 15;
-    scoreBoard.y = 200;
-    scoreBoard.w = 192;
-    scoreBoard.h = 43;
+    scoreBoard = (SDL_Rect) {15, 200, 192, 43};
 
     //Initialize highscore board
-    highscoreBoard.x = 15;
-    highscoreBoard.y = 100;
-    highscoreBoard.w = 192;
-    highscoreBoard.h = 43;
+    highscoreBoard = (SDL_Rect) {15, 100, 192, 43};
 
     //Initialize time board
-    timeBoard.x = 15;
-    timeBoard.y = 400;
-    timeBoard.w = 192;
-    timeBoard.h = 71;
+    timeBoard = (SDL_Rect) {15, 400, 192, 71};
+    //Inititalize time select box
+    timeSelect = (SDL_Rect) {340, 450, 125, 30};
 
     //Initialize mode select box
-    modeSelect.x = 325;
-    modeSelect.y = 425;
-    modeSelect.w = 150;
-    modeSelect.h = 50;
+    modeSelect = (SDL_Rect) {325, 415, 160, 35};
+    //Initialize exit box
+    exit = (SDL_Rect) {15, 500, 194, 43};
 }
 
 void GameBoard::scoreCalculate() {
@@ -92,20 +81,31 @@ void GameBoard::refill() {
     }
 }
 
+void GameBoard::renderHighlight(SDL_Rect &rect) {
+    engine.highlightTexture.renderTexture(&rect);
+}
+
 void GameBoard::renderStart() {
+    engine.timer.stop();
+    score = 0;
     engine.startTexture.renderTexture();
     
-    std::string mode;
-    switch(gameMode) {
-        case Time:
-            mode = "Time";
-            break;
-        case Zen:
-            mode = "Zen";
-            break;
+    std::string game_mode[] = {"Time", "Zen", "Endless"};
+    engine.gameModeText.loadText(game_mode[gameMode] + " mode");
+    engine.gameModeText.renderText(-1, -1, &modeSelect);
+
+    if(gameMode == Time) {
+        int time_mode[] = {10, 120, 300};
+        time = time_mode[timeMode];
+        if(time <= 120 || time % 60 != 0)
+            engine.timeModeText.loadText(std::to_string(time) + " seconds");
+        else engine.timeModeText.loadText(std::to_string(time / 60) + " minutes");
+        engine.timeModeText.renderText(-1, -1, &timeSelect);
     }
-    engine.mode.loadText("< " + mode + " mode >");
-    engine.mode.renderText(-1, -1, &modeSelect);
+    
+    if(!selectChange)
+        renderHighlight(modeSelect);
+    else renderHighlight(timeSelect);
     engine.render();
 }
 
@@ -118,6 +118,7 @@ void GameBoard::renderEnd() {
 
 void GameBoard::renderBoard() {
     engine.boardTexture.renderTexture();
+    engine.exitTexture.renderTexture(&exit);
     renderScore();
     renderHighScore();
     if(gameMode == Time)
@@ -141,16 +142,17 @@ void GameBoard::renderHighScore() {
 void GameBoard::renderTimer() {
     std::string minutes, seconds;
     if(gameStarted) {
-        if(!gameover && !engine.timer.countdown(time)) {
+        if(gameover) {
             engine.timer.stop();
+            } else if(!engine.timer.countdown(time * 1000)) {
             gameover = true;
         }
         minutes = std::to_string(engine.timer.time / 60);
         seconds = std::to_string(engine.timer.time % 60);
     }
     else  {
-        minutes = std::to_string((time/1000) / 60);
-        seconds = std::to_string((time/1000) % 60);
+        minutes = std::to_string(time / 60);
+        seconds = std::to_string(time % 60);
     }
 
     if(std::stoi(minutes) < 10) {
@@ -167,9 +169,11 @@ void GameBoard::renderTimer() {
 }
 
 void GameBoard::startNotice() {
+    SDL_Delay(1000);
     renderBoard();
     engine.startNotice.renderText(-1, -1);
     engine.render();
+    SDL_Delay(700);
 }
 
 

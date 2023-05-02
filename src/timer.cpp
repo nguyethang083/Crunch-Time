@@ -56,7 +56,7 @@ void Timer::unpause() {
     }
 }
 
-bool Timer::countdown(Uint32 timer) {
+bool Timer::countdown(const Uint32 &timer) {
     if(!isStarted()) {
         start();
     }

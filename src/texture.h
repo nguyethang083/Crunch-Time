@@ -19,7 +19,7 @@ class Texture {
 		~Texture();
 
 		//Loads image at specified path
-		bool loadFile(std::string path);
+		bool loadFile(const std::string &path);
 
 		/* Renders texture to an existing SDL_Rect
 		   rect = NULL if render to entire screen */

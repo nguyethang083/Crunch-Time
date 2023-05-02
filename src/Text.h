@@ -24,7 +24,7 @@ class Text {
 		bool openFont(int size);
 
 		//Creates image from font string
-		bool loadText(std::string textureText);
+		bool loadText(const std::string &text);
 
 		/* Render text in center horizontally if x = -1, vertically if y = -1
 		   rect = NULL if render to entire screen	*/

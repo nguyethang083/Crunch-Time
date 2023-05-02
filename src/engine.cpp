@@ -39,7 +39,7 @@ bool Engine::init() {
         success = false;
     }
 
-    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0){
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0){
         LogMixer("Mixer_OpenAudio");
         success = false;
     }
@@ -89,6 +89,8 @@ bool Engine::initTexture() {
         hintTexture.loadFile("assets/hint.png") &&
         scoreTexture.loadFile("assets/play button.png") && 
         timerTexture.loadFile("assets/timer bg.png") &&
+        highlightTexture.loadFile("assets/highlight.png") &&
+        exitTexture.loadFile("assets/exit.png") &&
         startTexture.loadFile("assets/start_bg_01.png") &&
         endTexture.loadFile("assets/endBackground.png"))
     return true;
@@ -98,8 +100,8 @@ bool Engine::initTexture() {
 
 bool Engine::initFont() {
     //Open font
-    if (!mode.openFont(30) || !scoreText.openFont(30) || !highscoreText.openFont(30) || !timeText.openFont(30) ||
-        !scores.openFont(35) || !highscores.openFont(35) || !times.openFont(75) || !startNotice.openFont(100))
+    if (!gameModeText.openFont(30) || !timeModeText.openFont(23) || !scoreText.openFont(30) || !highscoreText.openFont(30) || 
+        !timeText.openFont(30) || !scores.openFont(35) || !highscores.openFont(35) || !times.openFont(75) || !startNotice.openFont(100))
     return false;
 
     //Load static text
@@ -123,14 +125,18 @@ void Engine::initSave() {
         Error("Warning: Unable to open save file!");
         //Initialize data
         for(int i = 0; i < Total_Mode; i++) {
-            savedHighscore[i] = 0;  
+            for(int j = 0; j < Total_Time; j++) {
+                savedHighscore[i][j] = 0;  
+            }
         }   
     }
     //File exists
     else {
         //Load data
         for(int i = 0; i < Total_Mode; i++) {
-            SDL_RWread(save, &savedHighscore[i], sizeof(Sint32), 1);
+            for(int j = 0; j < Total_Time; j++) {
+                SDL_RWread(save, &savedHighscore[i][j], sizeof(Sint32), 1);
+            }
         }
 
         //Close file handler
@@ -147,7 +153,9 @@ bool Engine::save() {
     if(save != NULL) {
         //Write to save file
         for(int i = 0; i < Total_Mode; i++) {
-            SDL_RWwrite(save, &savedHighscore[i], sizeof(Sint32), 1);
+            for(int j = 0; j < Total_Time; j++) {
+                SDL_RWwrite(save, &savedHighscore[i][j], sizeof(Sint32), 1);
+            }
         }
 
         //Close file handler

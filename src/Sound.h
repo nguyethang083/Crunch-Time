@@ -16,8 +16,8 @@ class Sound {
         ~Sound();
 
         //Load sound
-        bool loadMusic(std::string path);
-        bool loadSFX(std::string path);
+        bool loadMusic(const std::string &path);
+        bool loadSFX(const std::string &path);
 
         //Sound control
         void playMusic();

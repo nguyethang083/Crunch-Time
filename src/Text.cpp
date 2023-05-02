@@ -23,7 +23,7 @@ bool Text::openFont(int size) {
 	return font != NULL;
 }
 
-bool Text::loadText(std::string textureText) {
+bool Text::loadText(const std::string &text) {
 	//Free texture if it exists
 	if(texture != NULL) {
 		SDL_DestroyTexture(texture);
@@ -33,11 +33,11 @@ bool Text::loadText(std::string textureText) {
 	SDL_Color textColor = {255, 255, 255};
 
 	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderText_Solid(font, textureText.c_str(), textColor);
+	SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
 	if(textSurface == NULL) {
 		LogTTF("TTF_RenderText");
 	} else {
-        texture = SDL_CreateTextureFromSurface( renderer, textSurface );
+        texture = SDL_CreateTextureFromSurface(renderer, textSurface);
 		if(texture == NULL) {
 			LogSDL("CreateTextureFromSurface");
 		} else {

@@ -1,7 +1,7 @@
 #include "candies.h"
 
-Candy::Candy(const int &nRows, const int &nCols, int time) : GameBoard(nRows, nCols, time) {
-    selected = pressed = hint = false;
+Candy::Candy(const int &nRows, const int &nCols) : GameBoard(nRows, nCols) {
+    selected = pressed = needHint = false;
 }
 
 void Candy::randomize() {
@@ -32,6 +32,7 @@ void Candy::renderCandy() {
 void Candy::updateCandy() {   
     renderCandy();
     engine.render();
+    SDL_Delay(400);
 }
 
 bool Candy::match3(const int &row, const int &col, const std::string &direction) {
@@ -114,15 +115,22 @@ bool Candy::existHint() {
 }
 
 void Candy::displayHint() {
-    engine.hintTexture.renderTexture(&square[hintX][hintY]);
-    engine.hintTexture.renderTexture(&square[hintX_][hintY_]);
+    if(gameover) {
+        hint.stop();
+        needHint = false;
+    }
+    else if(!hint.countdown(7000)) {
+        needHint = true;
+    }
+    if(needHint) {
+        engine.hintTexture.renderTexture(&square[hintX][hintY]);
+        engine.hintTexture.renderTexture(&square[hintX_][hintY_]);
+    }
 }
 
-void Candy::renderSelector(int selectedX, int selectedY, int x, int y) {
+void Candy::renderSelector(const int &selectedX, const int &selectedY, const int &x, const int &y) {
     renderCandy();
-    if(hint) {
-        displayHint();
-    }
+    displayHint();
     if(selected) {
         engine.selectorTexture.renderTexture(&square[selectedX][selectedY]);
     }
@@ -130,4 +138,28 @@ void Candy::renderSelector(int selectedX, int selectedY, int x, int y) {
         engine.selectorTexture.renderTexture(&square[x][y]);
     }
     engine.render();
+}
+
+void Candy::updateGame() {
+    int count = 0;
+    while(existMatch()) {
+        hint.stop();
+        needHint = false;
+
+        //Choose which sfx to play
+        count++;
+        if(count == 1) {
+            engine.matchSFX[0].playSFX();
+        }
+        else if(count == 2) {
+            engine.matchSFX[1].playSFX();
+        }
+        else engine.matchSFX[2].playSFX();
+
+        //Matching actions
+        clear();
+        updateCandy();
+        refill();
+        updateCandy();
+    }
 }

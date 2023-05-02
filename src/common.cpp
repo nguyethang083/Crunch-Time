@@ -8,6 +8,9 @@ bool gameover = false;
 bool pressed = false;
 bool selected = false;
 
-int gameMode;
+bool selectChange = false;
 
-Sint32* highscore;
+int gameMode = 0;
+int timeMode = 1;
+
+Sint32* highscore = 0;

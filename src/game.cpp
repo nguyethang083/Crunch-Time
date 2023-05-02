@@ -1,9 +1,8 @@
 #include "game.h"
 
-Game::Game(const int &nRows, const int &nCols, int time) : candy(nRows, nCols, time), nRows(nRows), nCols(nCols) {
-    gameStarted = false;
+Game::Game(const int &nRows, const int &nCols) : candy(nRows, nCols), nRows(nRows), nCols(nCols) {
+    gameStarted = exit = false;
     running = true;
-    gameMode = Time;
 
     startGame();
 
@@ -17,14 +16,42 @@ void Game::startGame() {
             running = false;
         else {
             candy.renderStart();
-            if(e.type == SDL_MOUSEBUTTONDOWN) {
-                SDL_GetMouseState(&pos.x, &pos.y);
-                if(SDL_PointInRect(&pos, &candy.modeSelect)) {
-                    gameMode = gameMode == Time ? Zen : Time;
+            if(e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) {
+                SDL_GetMouseState(&mousePos.x, &mousePos.y);
+                if(SDL_PointInRect(&mousePos, &candy.modeSelect)) {
+                    selectChange = false;
+                    if(e.type == SDL_MOUSEBUTTONDOWN)
+                        gameMode = (gameMode + 1) % Total_Mode;
+                }
+                else if(gameMode == Time && SDL_PointInRect(&mousePos, &candy.timeSelect)) {
+                    selectChange = true;
+                    if(e.type == SDL_MOUSEBUTTONDOWN)
+                        timeMode = (timeMode + 1) % Total_Time;
                 }
             }
-            else if((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN)) {
-                start();
+            else if(e.type == SDL_KEYDOWN) {
+                switch(e.key.keysym.sym) {
+                    case SDLK_s: case SDLK_w: case SDLK_DOWN: case SDLK_UP:
+                        if(gameMode == Time)
+                            selectChange ? selectChange = false : selectChange = true;
+                        break;
+
+                    case SDLK_RIGHT: case SDLK_d:
+                        if(!selectChange)
+                            gameMode = (gameMode + 1) % Total_Mode;
+                        else timeMode = (timeMode + 1) % Total_Time;
+                        break;
+
+                    case SDLK_LEFT: case SDLK_a:
+                        if(!selectChange)
+                            gameMode = (Total_Mode + (gameMode - 1)) % Total_Mode;
+                        else timeMode = (Total_Time + (timeMode - 1)) % Total_Time;
+                        break;
+
+                    case SDLK_RETURN:
+                        start();
+                        break;
+                }
             }
         }
     }
@@ -33,59 +60,43 @@ void Game::startGame() {
 void Game::endGame() {
     if(gameStarted) {
         gameStarted = false;
-        candy.renderEnd();
-        candy.engine.endSFX.playSFX();
         candy.engine.music.stopMusic();
+        if(!exit) {
+            candy.renderEnd();
+            candy.engine.endSFX.playSFX();
+        }
+    }
+    if(exit) {
+        startGame();
+        return;
     }
     if(e.type == SDL_KEYDOWN) {
-        if(e.key.keysym.sym == SDLK_ESCAPE)
+        if(e.key.keysym.sym == SDLK_ESCAPE) {
             startGame();
-        else if(e.key.keysym.sym == SDLK_RETURN)
+            return;
+        }
+        else if(e.key.keysym.sym == SDLK_RETURN) {
             start();
+            return;
+        }
         gameover = false;
         start();
     }
 }
 
 void Game::start() {
-    gameover = false;
-    highscore = &candy.engine.savedHighscore[gameMode];
+    gameover = exit = false;
+    if(gameMode == Time)
+        highscore = &candy.engine.savedHighscore[Time][timeMode];
+    else highscore = &candy.engine.savedHighscore[gameMode][0];
 
     candy.engine.startSFX.playSFX();
-    SDL_Delay(1000);
     candy.startNotice();
-    SDL_Delay(1000);
     gameStarted = true;
     candy.engine.music.playMusic();
     timerID = SDL_AddTimer(1000, callback, NULL);
     candy.randomize();
     candy.updateCandy();
-}
-
-void Game::updateGame() {
-    int count = 0;
-    while(candy.existMatch()) {
-        //Stop hint timer because matched
-        hint.stop();
-        candy.hint = false;
-
-        //Choose which sfx to play
-        count++;
-        if(count == 1) {
-            candy.engine.matchSFX[0].playSFX();
-        }
-        else if(count == 2) {
-            candy.engine.matchSFX[1].playSFX();
-        }
-        else candy.engine.matchSFX[2].playSFX();
-
-        //Matching actions
-        candy.clear();
-        candy.updateCandy();
-        SDL_Delay(700);
-        candy.refill();
-        candy.updateCandy();
-    }
 }
 
 void Game::run() {
@@ -100,20 +111,13 @@ void Game::run() {
         if(gameover) {
             if(gameStarted) {
                 SDL_RemoveTimer(timerID);
-                hint.stop();
-                candy.hint = false;
                 if(!candy.existMatch()) {
-                    SDL_Delay(1000);
+                    SDL_Delay(400);
                 }
-                candy.engine.save();
             }
             endGame();
         }
         else {
-            //Start hint timer, display hint if return false
-            if(!hint.countdown(7000)) {
-                candy.hint = true;
-            }
             if(e.type == SDL_KEYDOWN) {
                 if(e.key.keysym.sym == SDLK_ESCAPE)
                     gameover = true;
@@ -122,19 +126,22 @@ void Game::run() {
                 }
                 else keyControl();
                 candy.renderSelector(selectedX, selectedY, x, y);
-                updateGame();
+                candy.updateGame();
             }
             if(e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
                 pressed = true;
-                SDL_GetMouseState(&pos.x, &pos.y);
+                SDL_GetMouseState(&mousePos.x, &mousePos.y);
+                if(e.type == SDL_MOUSEBUTTONDOWN && SDL_PointInRect(&mousePos, &candy.exit)) {
+                    gameover = exit = true;
+                }
                 for(int x_ = 0; x_ < nRows; x_++) {
                     for(int y_ = 0; y_ < nCols; y_++) {
-                        if(SDL_PointInRect(&pos, &candy.square[x_][y_])) {
+                        if(SDL_PointInRect(&mousePos, &candy.square[x_][y_])) {
                             x = x_;
                             y = y_;
                             mouseControl();
                             candy.renderSelector(selectedX, selectedY, x, y);
-                            updateGame();
+                            candy.updateGame();
                         }
                     }
                 }
@@ -156,8 +163,7 @@ void Game::keyControl() {
                 if(x != selectedX)
                     x = selectedX - 1;
             }
-            else if(x == -1)
-                x = nRows - x - 2;
+            else x = (nRows + x) % nRows;
             break;
 
         case SDLK_DOWN: case SDLK_s:
@@ -169,8 +175,7 @@ void Game::keyControl() {
                 if(x != selectedX)
                     x = selectedX + 1;
             }
-            else if(x == nRows)
-                x = 0;
+            else x = x % nRows;
             break;
 
         case SDLK_LEFT: case SDLK_a:
@@ -182,8 +187,7 @@ void Game::keyControl() {
                 if(y != selectedY)
                     y = selectedY - 1;
             }
-            else if(y == -1)
-                y = nCols - y - 2;
+            else y = (nCols + y) % nCols;
             break;
 
         case SDLK_RIGHT: case SDLK_d:
@@ -195,8 +199,7 @@ void Game::keyControl() {
                 if(y != selectedY)
                     y = selectedY + 1;
             }
-            else if(y == nRows)
-                y = 0;
+            else y = y % nCols;
             break;
 
         case SDLK_RETURN: case SDLK_SPACE:
@@ -249,13 +252,10 @@ void Game::swapCandies() {
         if(swapCheck()) {
             std::swap(candy.board[selectedX][selectedY], candy.board[x][y]);
             candy.updateCandy();
-            SDL_Delay(300);
             if(!candy.existMatch()) {
                 std::swap(candy.board[selectedX][selectedY], candy.board[x][y]);
                 candy.updateCandy();
-                SDL_Delay(300);
             }
-            else x = y = 0;
             pressed = false;
         }
         else {

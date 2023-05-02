@@ -20,14 +20,14 @@ class Timer {
     public:
 		Timer();
 
-        int time;
+        Uint32 time;
 
 		//Clock actions
 		void start();
 		void stop();
 		void pause();
 		void unpause();
-        bool countdown(Uint32 timer);
+        bool countdown(const Uint32 &timer);
 
 		//Checks timer's status
 		bool isStarted();
