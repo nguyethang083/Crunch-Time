@@ -68,7 +68,7 @@ void Text::renderText(int x, int y, SDL_Rect* rect) {
 			centerY = (windowHeight - height) / 2;
 		}
 
-		x = (x == -1) ? centerX  : x;
+		x = (x == -1) ? centerX : x;
 		y = (y == -1) ? centerY : y;
 	}
 

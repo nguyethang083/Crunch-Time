@@ -5,18 +5,25 @@ Candy::Candy(const int &nRows, const int &nCols) : GameBoard(nRows, nCols) {
 }
 
 void Candy::randomize() {
-    randomized = true;
-    //Create board
-    for (int i = 0; i < nRows; i++) {
-        for (int j = 0; j < nCols; j++) {
-            board[i][j] = engine.getRandom();
+    if(forceQuit && selectChange == ContinueSelection) {
+        score = engine.savedScore;
+        board = engine.savedBoard;
+        time = engine.savedTime;
+        forceQuit = false;
+    } else {
+        randomized = true;
+        //Board creation
+        for(int i = 0; i < nRows; i++) {
+            for(int j = 0; j < nCols; j++) {
+                board[i][j] = engine.getRandom();
+            }
         }
+        while(existMatch()) {
+            clear();
+            refill();
+        }
+        randomized = false;
     }
-    while(existMatch()) {
-        clear();
-        refill();
-    }
-    randomized = false;
 }
 
 void Candy::renderCandy() {
@@ -40,8 +47,7 @@ bool Candy::match3(const int &row, const int &col, const std::string &direction)
     int stepY = 0;
     if(direction == "HORIZONTAL") {
         stepY = 1;
-    }
-    else if(direction == "VERTICAL") {
+    } else if(direction == "VERTICAL") {
         stepX = 1;
     }
 
@@ -92,7 +98,7 @@ bool Candy::existHint() {
             std::swap(board[x][y], board[x+1][y]);
             if(existMatch()) {
                 //Set hint position
-                hintX = x; hintY = y; hintX_ = x+1; hintY_ = y;
+                hintX = x; hintY = y; hintX_ = x + 1; hintY_ = y;
                 board = tempBoard;
                 pendingRemoval = tempPending;
                 return true;
@@ -103,7 +109,7 @@ bool Candy::existHint() {
             std::swap(board[x][y], board[x][y+1]);
             if(existMatch()) {
                 //Set hint position
-                hintX = x; hintY = y; hintX_ = x; hintY_ = y+1;
+                hintX = x; hintY = y; hintX_ = x; hintY_ = y + 1;
                 board = tempBoard;
                 pendingRemoval = tempPending;
                 return true;
@@ -115,11 +121,7 @@ bool Candy::existHint() {
 }
 
 void Candy::displayHint() {
-    if(gameover) {
-        hint.stop();
-        needHint = false;
-    }
-    else if(!hint.countdown(7000)) {
+    if(!hint.countdown(7000)) {
         needHint = true;
     }
     if(needHint) {
@@ -162,4 +164,10 @@ void Candy::updateGame() {
         refill();
         updateCandy();
     }
+}
+
+void Candy::saveState() {
+    engine.savedScore = score;
+    engine.savedTime = engine.timer.time;
+    engine.savedBoard = board;
 }

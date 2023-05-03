@@ -1,8 +1,6 @@
 #ifndef GAME_BOARD_H
 #define GAME_BOARD_H
 #include "engine.h"
-#include <vector>
-using std::vector; 
 
 class GameBoard {
     protected:
@@ -53,11 +51,13 @@ class GameBoard {
         void scoreCalculate();
 
         //Mode select
+        SDL_Rect continueSelect;
+        SDL_Rect newGameSelect;
         SDL_Rect modeSelect;
         SDL_Rect timeSelect;
-
+        //Exit to main menu
         SDL_Rect exit;
-        
+
         //Clear matching candies
         void clear();
 

@@ -13,7 +13,7 @@ class Game {
         Candy candy;
 
         //Board size
-        int nRows, nCols;
+        const int nRows, nCols;
 
         //Coordinate
         int x, y;
@@ -47,9 +47,6 @@ class Game {
         //Check if game is running
         bool running;
 
-        //Check if choose to exit
-        bool exit;
-
         static Uint32 callback(Uint32 interval, void* param);
     
     public:
@@ -57,7 +54,6 @@ class Game {
          * Create a game board with nRows rows and nCols column
          * \param nRows number of rows
          * \param nCols number of column
-         * \param time game's timer
         */
         Game(const int &nRows, const int &nCols);
 

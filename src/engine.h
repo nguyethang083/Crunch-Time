@@ -4,6 +4,8 @@
 #include "Text.h"
 #include "timer.h"
 #include "Sound.h"
+#include <vector>
+using std::vector;
 
 //Candies in squares
 enum Candies {Destroyed, Red, Green, Blue, Orange, Pink, Gold, Total};
@@ -13,6 +15,9 @@ enum GameModes {Time, Zen, Endless, Total_Mode};
 
 //Time modes
 enum TimeModes {OneMinute, TwoMinutes, FiveMinutes, Total_Time};
+
+//Change selection
+enum SelectionChange {ContinueSelection, NewGameSelection, GameSelection, TimeSelection, Total_Selection};
 
 class Engine {
     private:
@@ -41,6 +46,7 @@ class Engine {
 
         //Read save data
         void initSave();
+
         //Save high score to disk
         bool save();
 
@@ -52,8 +58,13 @@ class Engine {
 
         //Saved high score from disk
         Sint32 savedHighscore[Total_Mode][Total_Time];
+        //Saved state
+        Sint32 savedScore;
+        Uint32 savedTime;
+        vector<vector<int>> savedBoard;
 
         Timer timer; 
+        
         //Textures
         Texture boardTexture; //Board texture
         Texture candyTexture[Total]; //Candies textures
@@ -67,6 +78,8 @@ class Engine {
         Texture endTexture; //End screen texture
 
         //Texts
+        Text continueText;
+        Text newGameText;
         Text gameModeText; //Game modes
         Text timeModeText; //Time modes
         Text scores; //Score

@@ -1,7 +1,6 @@
 #include "game.h"
 
 Game::Game(const int &nRows, const int &nCols) : candy(nRows, nCols), nRows(nRows), nCols(nCols) {
-    gameStarted = exit = false;
     running = true;
 
     startGame();
@@ -11,41 +10,65 @@ Game::Game(const int &nRows, const int &nCols) : candy(nRows, nCols), nRows(nRow
 }
 
 void Game::startGame() {
-    while(!gameStarted && running && SDL_WaitEvent(&e)) {
-        if(e.type == SDL_QUIT)
+    while(SDL_WaitEvent(&e)) {
+        if(e.type == SDL_QUIT) {
             running = false;
+            break;
+        }
         else {
             candy.renderStart();
             if(e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN) {
                 SDL_GetMouseState(&mousePos.x, &mousePos.y);
-                if(SDL_PointInRect(&mousePos, &candy.modeSelect)) {
-                    selectChange = false;
+                if(forceQuit) {
+                    if(SDL_PointInRect(&mousePos, &candy.continueSelect)) {
+                        selectChange = ContinueSelection;
+                        if(e.type == SDL_MOUSEBUTTONDOWN) {
+                            start();
+                            break;
+                        }
+                    }
+                }
+                if(SDL_PointInRect(&mousePos, &candy.newGameSelect)) {
+                    selectChange = NewGameSelection;
+                    if(e.type == SDL_MOUSEBUTTONDOWN) {
+                        forceQuit = false;
+                        start();
+                        break;
+                    }
+                }
+                else if(SDL_PointInRect(&mousePos, &candy.modeSelect)) {
+                    selectChange = GameSelection;
                     if(e.type == SDL_MOUSEBUTTONDOWN)
                         gameMode = (gameMode + 1) % Total_Mode;
                 }
                 else if(gameMode == Time && SDL_PointInRect(&mousePos, &candy.timeSelect)) {
-                    selectChange = true;
+                    selectChange = TimeSelection;
                     if(e.type == SDL_MOUSEBUTTONDOWN)
                         timeMode = (timeMode + 1) % Total_Time;
                 }
             }
             else if(e.type == SDL_KEYDOWN) {
                 switch(e.key.keysym.sym) {
-                    case SDLK_s: case SDLK_w: case SDLK_DOWN: case SDLK_UP:
-                        if(gameMode == Time)
-                            selectChange ? selectChange = false : selectChange = true;
+                    case SDLK_s: case SDLK_DOWN:
+                        selectChange = (selectChange + 1) % Total_Selection;
+                        break;
+
+                    case SDLK_w: case SDLK_UP:
+                        selectChange = (Total_Selection + (selectChange - 1)) % Total_Selection;
                         break;
 
                     case SDLK_RIGHT: case SDLK_d:
-                        if(!selectChange)
+                        if(selectChange == GameSelection)
                             gameMode = (gameMode + 1) % Total_Mode;
-                        else timeMode = (timeMode + 1) % Total_Time;
+                        else if(selectChange == TimeSelection) 
+                            timeMode = (timeMode + 1) % Total_Time;
                         break;
 
                     case SDLK_LEFT: case SDLK_a:
-                        if(!selectChange)
+                        if(selectChange == GameSelection)
                             gameMode = (Total_Mode + (gameMode - 1)) % Total_Mode;
-                        else timeMode = (Total_Time + (timeMode - 1)) % Total_Time;
+                        else if(selectChange == TimeSelection)
+                            timeMode = (Total_Time + (timeMode - 1)) % Total_Time;
                         break;
 
                     case SDLK_RETURN:
@@ -58,41 +81,41 @@ void Game::startGame() {
 }
 
 void Game::endGame() {
-    if(gameStarted) {
-        gameStarted = false;
-        candy.engine.music.stopMusic();
-        if(!exit) {
-            candy.renderEnd();
-            candy.engine.endSFX.playSFX();
-        }
-    }
-    if(exit) {
+    candy.engine.music.stopMusic();
+    if(forceQuit) {
         startGame();
         return;
     }
-    if(e.type == SDL_KEYDOWN) {
-        if(e.key.keysym.sym == SDLK_ESCAPE) {
-            startGame();
-            return;
+    else {
+        candy.renderEnd();
+        candy.engine.endSFX.playSFX();
+    }
+    while(SDL_WaitEvent(&e)) {
+        if(e.type == SDL_QUIT) {
+            running = false;;
+            break;
         }
-        else if(e.key.keysym.sym == SDLK_RETURN) {
-            start();
-            return;
+        if(e.type == SDL_KEYDOWN) {
+            if(e.key.keysym.sym == SDLK_ESCAPE) {
+                startGame();
+                break;
+            }
+            else if(e.key.keysym.sym == SDLK_RETURN) {
+                start();
+                break;
+            }
         }
-        gameover = false;
-        start();
     }
 }
 
 void Game::start() {
-    gameover = exit = false;
+    gameover = false;
     if(gameMode == Time)
         highscore = &candy.engine.savedHighscore[Time][timeMode];
     else highscore = &candy.engine.savedHighscore[gameMode][0];
 
     candy.engine.startSFX.playSFX();
     candy.startNotice();
-    gameStarted = true;
     candy.engine.music.playMusic();
     timerID = SDL_AddTimer(1000, callback, NULL);
     candy.randomize();
@@ -101,21 +124,24 @@ void Game::start() {
 
 void Game::run() {
     while(running && SDL_WaitEvent(&e)) {
-        if(e.type == SDL_QUIT)
+        if(e.type == SDL_QUIT) {
             running = false;
-        if(!candy.existHint()) {
+            forceQuit = true;
+            candy.saveState();
+        }
+        if(gameover) {
+            candy.hint.stop();
+            candy.needHint = false;
+            SDL_RemoveTimer(timerID);
+            if(!candy.existMatch()) {
+                SDL_Delay(400);
+            }
+            endGame();
+        }
+        else if(!candy.existHint()) {
             if(gameMode == Zen)
                 gameover = true; 
             else candy.randomize();
-        }
-        if(gameover) {
-            if(gameStarted) {
-                SDL_RemoveTimer(timerID);
-                if(!candy.existMatch()) {
-                    SDL_Delay(400);
-                }
-            }
-            endGame();
         }
         else {
             if(e.type == SDL_KEYDOWN) {
@@ -132,7 +158,8 @@ void Game::run() {
                 pressed = true;
                 SDL_GetMouseState(&mousePos.x, &mousePos.y);
                 if(e.type == SDL_MOUSEBUTTONDOWN && SDL_PointInRect(&mousePos, &candy.exit)) {
-                    gameover = exit = true;
+                    gameover = forceQuit = true;
+                    candy.saveState();
                 }
                 for(int x_ = 0; x_ < nRows; x_++) {
                     for(int y_ = 0; y_ < nCols; y_++) {
@@ -146,6 +173,7 @@ void Game::run() {
                     }
                 }
             }
+                //TimerID event
                 else candy.renderSelector(selectedX, selectedY, x, y);
             }
         } 

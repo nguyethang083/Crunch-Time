@@ -35,6 +35,9 @@ class Candy : private GameBoard {
 
         //Update game state
         void updateGame();
+
+        //Save game state
+        void saveState();
 };
 
 #endif

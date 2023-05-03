@@ -1,8 +1,9 @@
 #include "engine.h"
 #include "log.h"
-#include <bits/stdc++.h>
+#include <random>
 
 Engine::Engine() : WINDOW_WIDTH(800), WINDOW_HEIGHT(600), TITLE("Crunch Time") {
+    savedBoard.resize(8, vector<int>(8));
     success = true; 
     if(!init()) {
         Error("Unable to init Engine");
@@ -10,8 +11,7 @@ Engine::Engine() : WINDOW_WIDTH(800), WINDOW_HEIGHT(600), TITLE("Crunch Time") {
     } else if(!initTexture()) {
         Error("Unable to load Textures");
         exit();
-    }
-    else if(!initFont()) {
+    } else if(!initFont()) {
         Error("Unable to load Fonts!");
         exit();
     } else if(!initSound()) {
@@ -100,12 +100,14 @@ bool Engine::initTexture() {
 
 bool Engine::initFont() {
     //Open font
-    if (!gameModeText.openFont(30) || !timeModeText.openFont(23) || !scoreText.openFont(30) || !highscoreText.openFont(30) || 
-        !timeText.openFont(30) || !scores.openFont(35) || !highscores.openFont(35) || !times.openFont(75) || !startNotice.openFont(100))
+    if( !continueText.openFont(30) || !newGameText.openFont(30) || !gameModeText.openFont(25) || !timeModeText.openFont(20) || 
+        !scoreText.openFont(30) || !highscoreText.openFont(30) || !timeText.openFont(30) || !scores.openFont(35) || 
+        !highscores.openFont(35) || !times.openFont(75) || !startNotice.openFont(100))
     return false;
 
     //Load static text
-    else if(!scoreText.loadText("score") || !highscoreText.loadText("high score") || !timeText.loadText("time") || !startNotice.loadText("START"))
+    else if(!continueText.loadText("Continue") || !newGameText.loadText("New Game") || !scoreText.loadText("score") || 
+            !highscoreText.loadText("high score") || !timeText.loadText("time") || !startNotice.loadText("START"))
         return false;
 
     else return true;
@@ -138,7 +140,16 @@ void Engine::initSave() {
                 SDL_RWread(save, &savedHighscore[i][j], sizeof(Sint32), 1);
             }
         }
-
+        SDL_RWread(save, &forceQuit, sizeof(bool), 1);
+        if(forceQuit) {
+            SDL_RWread(save, &savedTime, sizeof(Uint32), 1);
+            SDL_RWread(save, &savedScore, sizeof(Sint32), 1);
+            for(int i = 0; i < 8; i++) {
+                for(int j = 0; j < 8; j++) {
+                    SDL_RWread(save, &savedBoard[i][j], sizeof(int), 1);
+                }
+            }
+        }
         //Close file handler
         SDL_RWclose(save);
     }
@@ -157,7 +168,16 @@ bool Engine::save() {
                 SDL_RWwrite(save, &savedHighscore[i][j], sizeof(Sint32), 1);
             }
         }
-
+        SDL_RWwrite(save, &forceQuit, sizeof(bool), 1);
+        if(forceQuit) {
+            SDL_RWwrite(save, &savedTime, sizeof(Uint32), 1);
+            SDL_RWwrite(save, &savedScore, sizeof(Sint32), 1);
+            for(int i = 0; i < 8; i++) {
+                for(int j = 0; j < 8; j++) {
+                    SDL_RWwrite(save, &savedBoard[i][j], sizeof(int), 1);
+                }
+            }
+        }
         //Close file handler
         SDL_RWclose(save);
     } else {
@@ -183,7 +203,7 @@ void Engine::exit() {
 int Engine::getRandom() {
     std::random_device dev;
     std::mt19937 rng(dev());
-    std::uniform_int_distribution<std::mt19937::result_type> dist(1, Total-1);
+    std::uniform_int_distribution<std::mt19937::result_type> dist(1, Total - 1);
     return dist(rng);
 }
 
