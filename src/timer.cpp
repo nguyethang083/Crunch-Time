@@ -84,7 +84,6 @@ Uint32 Timer::getTicks() {
             time = SDL_GetTicks() - startTicks;
         }
     }
-
     return time;
 }
 

@@ -1,16 +1,17 @@
 #include "gameboard.h"
 
-GameBoard::GameBoard(const int &nRows, const int &nCol) : nRows(nRows), nCols(nCols) {
+GameBoard::GameBoard(const int &nRows, const int &nCols) : nRows(nRows), nCols(nCols) {
     score = 0;
-    //Init board
-    board.resize(nRows, vector<int>(nCols));  
+
+    //Initialize board
+    board.resize(nRows, vector<int>(nCols));
 
     //Initialize squares
     square.resize(nRows, vector<SDL_Rect>(nCols));
     int startX = 240, startY = 35;
-    for(int row = 0; row < nRows; row++){
-        for(int col = 0; col < nCols; col++){
-           square[row][col] = (SDL_Rect) {col * 65 + startX, row * 65 + startY, 65, 65}; 
+    for(int row = 0; row < nRows; row++) {
+        for(int col = 0; col < nCols; col++) {
+            square[row][col] = (SDL_Rect) {col * 65 + startX, row * 65 + startY, 65, 65};
         }
     }
 
@@ -18,13 +19,10 @@ GameBoard::GameBoard(const int &nRows, const int &nCol) : nRows(nRows), nCols(nC
 
     //Initialize score board
     scoreBoard = (SDL_Rect) {15, 200, 192, 43};
-
     //Initialize highscore board
     highscoreBoard = (SDL_Rect) {15, 100, 192, 43};
-
     //Initialize time board
     timeBoard = (SDL_Rect) {15, 400, 192, 71};
-    
     //Initialize exit box
     exit = (SDL_Rect) {15, 500, 194, 43};
 
@@ -50,7 +48,7 @@ void GameBoard::clear() {
     if(!randomized)
         scoreCalculate();
     *highscore = score > *highscore ? score : *highscore;
-    
+
     for(int row = 0; row < nRows; row++) {
         for(int col = 0; col < nCols; col++) {
             if(pendingRemoval[row][col]) {
@@ -72,7 +70,7 @@ void GameBoard::refill() {
             }
         }
     }
-
+    
     //Fill empty squares with new candies
     for(int row = 0; row < nRows; row++) {
         for(int col = 0; col < nCols; col++) {
@@ -91,7 +89,7 @@ void GameBoard::renderStart() {
     engine.timer.stop();
     score = 0;
     engine.startTexture.renderTexture();
-    
+
     if(forceQuit) {
         engine.continueText.renderText(-1, -1, &continueSelect);
     }
@@ -109,7 +107,7 @@ void GameBoard::renderStart() {
             engine.timeModeText.renderText(-1, -1, &timeSelect);
         }
     }
-    
+
     switch(selectChange) {
         case ContinueSelection:
             renderHighlight(continueSelect);
@@ -170,7 +168,7 @@ void GameBoard::renderTimer() {
     }
     minutes = std::to_string(engine.timer.time / 60);
     seconds = std::to_string(engine.timer.time % 60);
-    
+
     if(std::stoi(minutes) < 10) {
         minutes = "0" + minutes;
     }
@@ -191,5 +189,3 @@ void GameBoard::startNotice() {
     engine.render();
     SDL_Delay(700);
 }
-
-
