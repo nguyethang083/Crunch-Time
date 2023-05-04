@@ -1,8 +1,8 @@
-#include "game.h"
-#define VERSION 2.6
+#include "Game.h"
+#define VERSION 3.0
 
-/* v2.6 changelog:
-    - Add continue
+/* v3.0 changelog:
+    - Add boss
     - Update textures
     - Other improvements
 */

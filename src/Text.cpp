@@ -1,5 +1,5 @@
 #include "Text.h"
-#include "log.h"
+#include "Log.h"
 
 Text::Text() {
 	//Initialize
@@ -15,7 +15,7 @@ bool Text::openFont(int size) {
 	}
 
 	TTF_Font* newFont = NULL;
-	newFont = TTF_OpenFont("assets/fonts/Digital7.ttf", size);
+	newFont = TTF_OpenFont("assets/fonts/LeOsler_Rough-Regular.ttf", size);
 	if(newFont == NULL) {
 		LogTTF("TTF_OpenFont");
 	}

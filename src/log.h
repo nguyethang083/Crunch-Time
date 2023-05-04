@@ -2,7 +2,6 @@
 #define LOG_H
 #include <string>
 
-
 //Log SDL error
 void LogSDL(const std::string &msg);
 

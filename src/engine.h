@@ -1,8 +1,8 @@
 #ifndef ENGINE_H
 #define ENGINE_H
-#include "texture.h"
+#include "Texture.h"
 #include "Text.h"
-#include "timer.h"
+#include "Timer.h"
 #include "Sound.h"
 #include <vector>
 using std::vector;
@@ -73,6 +73,7 @@ class Engine {
         Texture scoreTexture; //Score texture
         Texture timerTexture; //Timer texture
         Texture highlightTexture; //Highlight selection texture
+        Texture bossTexture; //Boss texture
         Texture exitTexture; //Exit texture
         Texture startTexture; //Start screen texture
         Texture endTexture; //End screen texture

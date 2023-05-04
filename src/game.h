@@ -1,6 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
-#include "candies.h"
+#include "Candies.h"
 
 class Game {
     private:
@@ -51,7 +51,7 @@ class Game {
     
     public:
         /**
-         * Create a game board with nRows rows and nCols column
+         * Create a game board with nRows rows and nCols columns
          * \param nRows number of rows
          * \param nCols number of column
         */

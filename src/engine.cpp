@@ -1,5 +1,5 @@
-#include "engine.h"
-#include "log.h"
+#include "Engine.h"
+#include "Log.h"
 #include <random>
 
 Engine::Engine() : WINDOW_WIDTH(800), WINDOW_HEIGHT(600), TITLE("Crunch Time") {
@@ -78,7 +78,7 @@ bool Engine::init() {
 }
 
 bool Engine::initTexture() {
-    if (boardTexture.loadFile("assets/game_background_4.png") &&
+    if (boardTexture.loadFile("assets/realbg.png") &&
         candyTexture[Red].loadFile("assets/red.jpg") &&
         candyTexture[Green].loadFile("assets/green.jpg") &&
         candyTexture[Blue].loadFile("assets/blue.jpg") &&
@@ -87,10 +87,11 @@ bool Engine::initTexture() {
         candyTexture[Gold].loadFile("assets/gold.jpg") &&
         selectorTexture.loadFile("assets/selector.png") && 
         hintTexture.loadFile("assets/hint.png") &&
-        scoreTexture.loadFile("assets/play button.png") && 
-        timerTexture.loadFile("assets/timer bg.png") &&
+        scoreTexture.loadFile("assets/button.png") && 
+        timerTexture.loadFile("assets/button.png") &&
         highlightTexture.loadFile("assets/highlight.png") &&
-        exitTexture.loadFile("assets/exit.png") &&
+        bossTexture.loadFile("assets/Artboard 1.png") &&
+        exitTexture.loadFile("assets/quit.jpg") &&
         startTexture.loadFile("assets/start_bg_01.png") &&
         endTexture.loadFile("assets/endBackground.png"))
     return true;
@@ -101,8 +102,8 @@ bool Engine::initTexture() {
 bool Engine::initFont() {
     //Open font
     if( !continueText.openFont(30) || !newGameText.openFont(30) || !gameModeText.openFont(25) || !timeModeText.openFont(20) || 
-        !scoreText.openFont(30) || !highscoreText.openFont(30) || !timeText.openFont(30) || !scores.openFont(35) || 
-        !highscores.openFont(35) || !times.openFont(75) || !startNotice.openFont(100))
+        !scoreText.openFont(25) || !highscoreText.openFont(25) || !timeText.openFont(25) || !scores.openFont(25) || 
+        !highscores.openFont(25) || !times.openFont(40) || !startNotice.openFont(100))
     return false;
 
     //Load static text

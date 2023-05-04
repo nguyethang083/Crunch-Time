@@ -1,5 +1,5 @@
 #include "Sound.h"
-#include "log.h"
+#include "Log.h"
 
 Sound::Sound() {
     music = NULL;

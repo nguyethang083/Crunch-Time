@@ -1,5 +1,5 @@
-#include "texture.h"
-#include "log.h"
+#include "Texture.h"
+#include "Log.h"
 
 Texture::Texture() {
 	//Init

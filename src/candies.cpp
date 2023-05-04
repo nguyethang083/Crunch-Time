@@ -1,4 +1,4 @@
-#include "candies.h"
+#include "Candies.h"
 
 Candy::Candy(const int &nRows, const int &nCols) : GameBoard(nRows, nCols) {
     selected = pressed = needHint = false;
@@ -38,8 +38,6 @@ void Candy::renderCandy() {
 
 void Candy::updateCandy() {   
     renderCandy();
-    engine.render();
-    SDL_Delay(400);
 }
 
 bool Candy::match3(const int &row, const int &col, const std::string &direction) {
@@ -139,7 +137,6 @@ void Candy::renderSelector(const int &selectedX, const int &selectedY, const int
     if(pressed) {
         engine.selectorTexture.renderTexture(&square[x][y]);
     }
-    engine.render();
 }
 
 void Candy::updateGame() {

@@ -1,7 +1,7 @@
 #ifndef TEXT_H
 #define TEXT_H
 #include <SDL_ttf.h>
-#include "common.h"
+#include "Common.h"
 
 class Text {
     private:

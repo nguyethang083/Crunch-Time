@@ -1,17 +1,17 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 #include <SDL_image.h>
-#include "common.h"
+#include "Common.h"
 
 class Texture {
 	private:
-		//The actual hardware texture
-		SDL_Texture* texture;
-
 		//Deallocates texture
 		void free();
 
 	public:
+		//The actual hardware texture
+		SDL_Texture* texture;
+		
 		//Initializes variables
 		Texture();
 

@@ -1,4 +1,5 @@
-#include "gameboard.h"
+#include "Gameboard.h"
+
 
 GameBoard::GameBoard(const int &nRows, const int &nCols) : nRows(nRows), nCols(nCols) {
     score = 0;
@@ -8,29 +9,29 @@ GameBoard::GameBoard(const int &nRows, const int &nCols) : nRows(nRows), nCols(n
 
     //Initialize squares
     square.resize(nRows, vector<SDL_Rect>(nCols));
-    int startX = 240, startY = 35;
+    int startX = 268, startY = 64;
     for(int row = 0; row < nRows; row++) {
         for(int col = 0; col < nCols; col++) {
-            square[row][col] = (SDL_Rect) {col * 65 + startX, row * 65 + startY, 65, 65};
+            square[row][col] = (SDL_Rect) {col * 59 + startX, row * 59 + startY, 57, 57};
         }
     }
 
     pendingRemoval.resize(nRows, vector<bool>(nCols));
 
     //Initialize score board
-    scoreBoard = (SDL_Rect) {15, 200, 192, 43};
+    scoreBoard = (SDL_Rect) {30, 430, 192, 71};
     //Initialize highscore board
-    highscoreBoard = (SDL_Rect) {15, 100, 192, 43};
+    highscoreBoard = (SDL_Rect) {30, 350, 170, 55};
     //Initialize time board
-    timeBoard = (SDL_Rect) {15, 400, 192, 71};
+    timeBoard = (SDL_Rect) {30, 70, 170, 55};
     //Initialize exit box
-    exit = (SDL_Rect) {15, 500, 194, 43};
+    exit = (SDL_Rect) {30, 500, 80, 80};
 
     //Inititalize select box
-    continueSelect = (SDL_Rect) {325, 400, 160, 35};
-    newGameSelect = (SDL_Rect) {325, 440, 160, 35};
-    modeSelect = (SDL_Rect) {325, 475, 160, 30};
-    timeSelect = (SDL_Rect) {340, 505, 125, 30};
+    continueSelect = (SDL_Rect) {600, 400, 160, 35};
+    newGameSelect = (SDL_Rect) {600, 440, 160, 35};
+    modeSelect = (SDL_Rect) {600, 475, 160, 30};
+    timeSelect = (SDL_Rect) {615, 505, 125, 30};
 }
 
 void GameBoard::scoreCalculate() {
@@ -147,16 +148,16 @@ void GameBoard::renderBoard() {
 
 void GameBoard::renderScore() {
     engine.scoreTexture.renderTexture(&scoreBoard);
-    engine.scoreText.renderText(70, 170);
+    engine.scoreText.renderText(85, 405);
     engine.scores.loadText(std::to_string(score));
-    engine.scores.renderText(25, -1, &scoreBoard);
+    engine.scores.renderText(50, -1, &scoreBoard);
 }
 
 void GameBoard::renderHighScore() {
     engine.scoreTexture.renderTexture(&highscoreBoard);
-    engine.highscoreText.renderText(50, 70);
+    engine.highscoreText.renderText(60, 320);
     engine.highscores.loadText(std::to_string(*highscore));
-    engine.highscores.renderText(25, -1, &highscoreBoard);
+    engine.highscores.renderText(50, -1, &highscoreBoard);
 }
 
 void GameBoard::renderTimer() {
@@ -177,7 +178,7 @@ void GameBoard::renderTimer() {
     }
 
     engine.timerTexture.renderTexture(&timeBoard);
-    engine.timeText.renderText(85, 370);
+    engine.timeText.renderText(80, 40);
     engine.times.loadText(minutes + ":" + seconds);
     engine.times.renderText(-1, -1, &timeBoard);
 }
@@ -188,4 +189,30 @@ void GameBoard::startNotice() {
     engine.startNotice.renderText(-1, -1);
     engine.render();
     SDL_Delay(700);
+}
+
+void GameBoard::renderBoss(bool& running, int dt) {
+    const int SCREEN_WIDTH = 800;
+    const int SCREEN_HEIGHT = 600;
+    const int SPRITE_WIDTH = 407;
+    const int SPRITE_HEIGHT = 328;
+    const int SPRITE_COUNT = 50;
+    const int SPRITE_ROWS = 8;
+    const int SPRITE_COLUMNS = 7;
+    SDL_Texture* spriteSheet = engine.bossTexture.texture;
+
+	 currentRow = currentSprite / SPRITE_COLUMNS;
+     currentColumn = currentSprite % SPRITE_COLUMNS;
+    
+
+    SDL_Rect srcRect = {currentColumn * SPRITE_WIDTH, currentRow * SPRITE_HEIGHT, SPRITE_WIDTH, SPRITE_HEIGHT};
+    SDL_Rect dstRect = {20, 130, SPRITE_WIDTH / 2, SPRITE_HEIGHT / 2};
+
+    SDL_RenderCopy(renderer, spriteSheet, &srcRect, &dstRect);
+    SDL_RenderPresent(renderer);
+    frameTime += dt;
+    if(running && frameTime >= 60) {
+        frameTime = 0;
+        currentSprite = (currentSprite + 1) % SPRITE_COUNT;
+    } 
 }

@@ -1,4 +1,5 @@
-#include "game.h"
+#include "Game.h"
+#include <chrono>
 
 Game::Game(const int &nRows, const int &nCols) : candy(nRows, nCols), nRows(nRows), nCols(nCols) {
     running = true;
@@ -123,7 +124,13 @@ void Game::start() {
 }
 
 void Game::run() {
-    while(running && SDL_WaitEvent(&e)) {
+    int dt, time1 = 0, time2;
+    while(running) {
+        time2 = clock();
+        dt = time2 - time1;
+        time1 = time2;
+        candy.renderBoss(running, dt);
+        SDL_PollEvent(&e);
         if(e.type == SDL_QUIT) {
             running = false;
             forceQuit = true;
@@ -134,7 +141,6 @@ void Game::run() {
             candy.needHint = false;
             SDL_RemoveTimer(timerID);
             if(!candy.existMatch()) {
-                SDL_Delay(400);
             }
             endGame();
         }
@@ -176,8 +182,10 @@ void Game::run() {
                 //TimerID event
                 else candy.renderSelector(selectedX, selectedY, x, y);
             }
+        
         } 
     SDL_RemoveTimer(timerID);
+    
 }
 
 void Game::keyControl() {

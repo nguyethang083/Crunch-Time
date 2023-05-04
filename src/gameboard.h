@@ -1,9 +1,13 @@
 #ifndef GAME_BOARD_H
 #define GAME_BOARD_H
-#include "engine.h"
+#include "Engine.h"
 
 class GameBoard {
     protected:
+        int currentSprite = 0;
+        int currentRow;
+        int currentColumn;
+        int frameTime = 0;
         Engine engine;
 
         //Board size
@@ -49,6 +53,9 @@ class GameBoard {
         void renderHighScore();
         Sint32 score;
         void scoreCalculate();
+
+        //Render boss
+        void renderBoss(bool& running, int dt);
 
         //Mode select
         SDL_Rect continueSelect;
