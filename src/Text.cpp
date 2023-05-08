@@ -33,7 +33,7 @@ bool Text::loadText(const std::string &text) {
 	SDL_Color textColor = {255, 255, 255};
 
 	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
+	SDL_Surface* textSurface = TTF_RenderText_Blended(font, text.c_str(), textColor);
 	if(textSurface == NULL) {
 		LogTTF("TTF_RenderText");
 	} else {
